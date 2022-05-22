@@ -13,11 +13,18 @@ public class GhostDrive : MonoBehaviour
     float horCalced = 0f;
     float rotSpeed = 0f;
 
+    Transform tran;
+    Rigidbody rigid;
+
+    public LayerMask groundLayers;
+
     float vertical, horizontal;
     // Start is called before the first frame update
     void Start()
     {
         followCam = FindObjectOfType<FollowCam>();
+        tran = transform;
+        rigid = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -42,17 +49,19 @@ public class GhostDrive : MonoBehaviour
             if(Mathf.Abs(vertical) > 0.01f)
             {
                 rotSpeed = Mathf.Lerp(rotSpeed, rotSpeedMult, Time.deltaTime * acceleration * 0.5f);
-                Vector3 rot = Vector3.RotateTowards(transform.forward, forward * Mathf.Sign(vertCalced), Time.deltaTime * rotSpeed, 0);
-                float rotChange = Vector3.SignedAngle(transform.forward, rot, transform.up);
-                transform.LookAt(transform.position + rot, transform.up);
+                Vector3 rot = Vector3.RotateTowards(tran.forward, forward * Mathf.Sign(vertCalced), Time.deltaTime * rotSpeed, 0);
+                float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
+                if(Mathf.Abs(rotChange) <= 0.1f) rotSpeed = 0f;
+                tran.LookAt(tran.position + rot, tran.up);
                 followCam.ChangeXRotation(rotChange);
             }
             else if(Mathf.Abs(horizontal) > 0.01f)
             {
                 rotSpeed = Mathf.Lerp(rotSpeed, rotSpeedMult, Time.deltaTime * acceleration * 0.5f);
-                Vector3 rot = Vector3.RotateTowards(transform.forward, followCam.tran.right * Mathf.Sign(horCalced), Time.deltaTime * rotSpeed, 0);
-                float rotChange = Vector3.SignedAngle(transform.forward, rot, transform.up);
-                transform.LookAt(transform.position + rot, transform.up);
+                Vector3 rot = Vector3.RotateTowards(tran.forward, followCam.tran.right * Mathf.Sign(horCalced), Time.deltaTime * rotSpeed, 0);
+                float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
+                if (Mathf.Abs(rotChange) <= 0.1f) rotSpeed = 0f;
+                tran.LookAt(tran.position + rot, tran.up);
                 followCam.ChangeXRotation(rotChange);
             }
             else
@@ -62,9 +71,17 @@ public class GhostDrive : MonoBehaviour
         }
         else
         {
-            move = transform.forward * vertCalced + transform.right * horCalced;
+            move = tran.forward * vertCalced + tran.right * horCalced;
         }
 
-        transform.position += move;
+        if(rigid == null)
+            tran.position += move;
+        else
+        {
+            rigid.AddForce(move, ForceMode.VelocityChange);
+            RaycastHit hit;
+            if(Physics.Raycast(tran.position, Vector3.down, out hit, 2f, groundLayers, QueryTriggerInteraction.Ignore))
+                rigid.AddForce(-Physics.gravity * (hit.distance), ForceMode.Acceleration);
+        }
     }
 }
