@@ -80,8 +80,9 @@ public class GhostDrive : MonoBehaviour
         {
             rigid.AddForce(move, ForceMode.VelocityChange);
             RaycastHit hit;
-            if(Physics.Raycast(tran.position, Vector3.down, out hit, 2f, groundLayers, QueryTriggerInteraction.Ignore))
-                rigid.AddForce(-Physics.gravity * (hit.distance), ForceMode.Acceleration);
+            if(Physics.Raycast(tran.position, Vector3.down, out hit, 2.5f, groundLayers, QueryTriggerInteraction.Ignore))
+                rigid.AddForce(-Physics.gravity * (4f - hit.distance), ForceMode.Acceleration);
+            else rigid.AddForce(-Physics.gravity * 0.5f, ForceMode.Acceleration);
         }
     }
 }

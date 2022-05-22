@@ -26,7 +26,7 @@ public class FollowCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        xOffset -= Input.GetAxis("Mouse X");
+        xOffset += Input.GetAxis("Mouse X");
         yOffset -= Input.GetAxis("Mouse Y");
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
 
