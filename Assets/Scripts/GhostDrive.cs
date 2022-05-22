@@ -47,6 +47,14 @@ public class GhostDrive : MonoBehaviour
                 transform.LookAt(transform.position + rot, transform.up);
                 followCam.ChangeXRotation(rotChange);
             }
+            else if(Mathf.Abs(horizontal) > 0.01f)
+            {
+                rotSpeed = Mathf.Lerp(rotSpeed, rotSpeedMult, Time.deltaTime * acceleration * 0.5f);
+                Vector3 rot = Vector3.RotateTowards(transform.forward, followCam.tran.right * Mathf.Sign(horCalced), Time.deltaTime * rotSpeed, 0);
+                float rotChange = Vector3.SignedAngle(transform.forward, rot, transform.up);
+                transform.LookAt(transform.position + rot, transform.up);
+                followCam.ChangeXRotation(rotChange);
+            }
             else
             {
                 rotSpeed = 0f;
