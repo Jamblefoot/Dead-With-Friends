@@ -948,3 +948,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   followDistance: 5
+  faces:
+  - {fileID: 2800000, guid: 7c77365415c537e439b9cb9ddd9735af, type: 3}
+  - {fileID: 2800000, guid: 7cc04d9eec70f5544be42937d1be5c57, type: 3}
+  - {fileID: 2800000, guid: 8a769596c8a14df41aa76c52b4949068, type: 3}
+  - {fileID: 2800000, guid: b5dd71c88670c9e4eb2999ddd9fd9bf5, type: 3}
+  - {fileID: 2800000, guid: 9540790c1c4860743a82085162f10964, type: 3}
+  - {fileID: 2800000, guid: c887defe19293c54f89f5db25a39e135, type: 3}
+  - {fileID: 2800000, guid: 29c4d7384bc5b4749b3c1261f85ec356, type: 3}
+  - {fileID: 2800000, guid: 82bfe58d3a29c9c4ea290d3af3144242, type: 3}

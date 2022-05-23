@@ -19,12 +19,20 @@ public class GhostAI : MonoBehaviour
     public LayerMask groundLayers;
     public float followDistance = 5f;
 
+    public Texture2D[] faces;
+
     // Start is called before the first frame update
     void Start()
     {
         player = FindObjectOfType<GhostDrive>().transform;
         tran = transform;
         rigid = GetComponent<Rigidbody>();
+
+        if(faces != null)
+        {
+            SkinnedMeshRenderer rend = GetComponent<SkinnedMeshRenderer>();
+            rend.material.SetTexture("_MainTex", faces[Random.Range(0, faces.Length)]);
+        }
     }
 
     void FixedUpdate()
