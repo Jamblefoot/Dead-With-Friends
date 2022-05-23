@@ -13,12 +13,18 @@ public class FollowCam : MonoBehaviour
     Vector3 lastPos;
     Vector3 cameraTargetLocalPos;
 
+    public LayerMask groundLayers;
+
+    float followDistance;
+
     // Start is called before the first frame update
     void Start()
     {
         tran = transform;
         cameraTran = GetComponentInChildren<Camera>().transform;
         cameraTargetLocalPos = cameraTran.localPosition;
+
+        followDistance = (tran.position - cameraTran.position).magnitude;
 
         lastPos = tran.position;
     }
@@ -31,6 +37,13 @@ public class FollowCam : MonoBehaviour
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
 
         tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
+
+        Vector3 camVector = (cameraTran.position - tran.position).normalized;
+        RaycastHit hit;
+        if(Physics.Raycast(tran.position, camVector, out hit, followDistance, groundLayers, QueryTriggerInteraction.Ignore))
+        {
+            cameraTran.position = tran.position + camVector * (hit.distance - 1f);
+        }
     }
 
     void FixedUpdate()
