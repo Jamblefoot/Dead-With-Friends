@@ -17,6 +17,10 @@ public class AICharacter : MonoBehaviour
 
     public bool alive = true;
 
+    public Seat currentSeat;
+
+    Transform mainParent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +41,10 @@ public class AICharacter : MonoBehaviour
         {
             rb.isKinematic = true;
         }
+
+        mainParent = tran.parent;
+        if(currentSeat != null)
+            EnterSeat(currentSeat);
     }
 
     void Seek(Vector3 location)
@@ -61,7 +69,7 @@ public class AICharacter : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
         agent.enabled = false;
-        transform.position = transform.position + Vector3.up * 2;
+        //transform.position = transform.position + Vector3.up * 2;
         anim.enabled = false;
         Instantiate(ghostPrefab, transform.position, transform.rotation);
 
@@ -71,16 +79,55 @@ public class AICharacter : MonoBehaviour
         }
     }
 
+    public void EnterSeat(Seat seat)
+    {
+        if(seat.occupant != null && seat.occupant != tran)
+            return;
+        
+        seat.occupant = tran;
+        agent.enabled = false;
+        anim.SetBool("sitting", true);
+        Collider col = seat.GetComponentInParent<Collider>();
+        foreach(Collider c in GetComponentsInChildren<Collider>())
+        {
+            Physics.IgnoreCollision(col, c, true);
+        }
+        tran.parent = seat.transform;
+        tran.localPosition = Vector3.zero;
+        tran.localRotation = Quaternion.identity;
+
+        
+
+    }
+    public void LeaveSeat()
+    {
+        anim.SetBool("sitting", false);
+        anim.SetBool("walking", false);
+        anim.SetBool("running", false);
+        tran.parent = mainParent;
+        agent.enabled = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if(GameControl.instance.inMenu) 
+        {
+            agent.speed = 0;
+            return;
+        }
+
         if(!alive) return;
 
         if (tran.position.y < GameControl.instance.waterLevel)
         {
+            if(currentSeat != null)
+                LeaveSeat();
             Kill();
             return;
         }
+
+        if(currentSeat != null) return;
 
         if(!scared)
         {

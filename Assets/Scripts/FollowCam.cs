@@ -32,6 +32,8 @@ public class FollowCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameControl.instance.inMenu) return;
+
         xOffset += Input.GetAxis("Mouse X");
         yOffset -= Input.GetAxis("Mouse Y");
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
@@ -48,6 +50,8 @@ public class FollowCam : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(GameControl.instance.inMenu) return;
+
         Vector3 moveDelta = tran.position - lastPos;
         lastPos = tran.position;
         cameraTran.position -= moveDelta;

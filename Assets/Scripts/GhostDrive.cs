@@ -38,6 +38,17 @@ public class GhostDrive : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(GameControl.instance.inMenu) 
+        {
+            if(rigid != null)
+                rigid.isKinematic = true;
+            return;
+        }
+        else
+        {
+            if(rigid != null && rigid.isKinematic)
+                rigid.isKinematic = false;
+        }
 
         Vector3 move = Vector3.zero;
 

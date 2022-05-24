@@ -6,7 +6,7 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl instance;
 
-    bool inMenu = false;
+    public bool inMenu = false;
     
     public Canvas menuCanvas;
     public Canvas gameCanvas;

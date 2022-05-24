@@ -1,11 +1,8 @@
 fileFormatVersion: 2
-guid: f3dbc7d452947874e997b9004bc7ee8e
+guid: 03078aaa82ae623438f0989d656d622d
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
-  - first:
-      74: 6200578666267062213
-    second: run
   - first:
       74: 4781694456446141791
     second: Character|idle
@@ -13,14 +10,11 @@ ModelImporter:
       74: 3094531246469982200
     second: Character|run
   - first:
+      74: -5064186791461592779
+    second: Character|sit
+  - first:
       74: -2681405468870073112
     second: Character|walk
-  - first:
-      74: 8212934197468790596
-    second: Character|walk (1)
-  - first:
-      74: -2935791964354565967
-    second: Character|run (1)
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -49,35 +43,6 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations:
-    - serializedVersion: 16
-      name: Character|run (1)
-      takeName: Character|run
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 16
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Character|idle
       takeName: Character|idle
@@ -113,6 +78,35 @@ ModelImporter:
       internalID: 0
       firstFrame: 0
       lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Character|sit
+      takeName: Character|sit
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 9
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -364,35 +358,35 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: characterBasicAnimatedRun(Clone)
+    - name: characterBasicSit(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: characterMesh
-      parentName: characterBasicAnimatedRun(Clone)
+      parentName: characterBasicSit(Clone)
       position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      rotation: {x: -0.7071067, y: -0.000000030908616, z: 0.000000030908623, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: Character
-      parentName: characterBasicAnimatedRun(Clone)
+      parentName: characterBasicSit(Clone)
       position: {x: -0, y: 0, z: 0}
-      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      rotation: {x: -0.7071067, y: 5.302452e-33, z: 5.302451e-33, w: 0.7071068}
       scale: {x: 1, y: 1, z: 1}
     - name: root
       parentName: Character
-      position: {x: -0, y: 0, z: 1.8341283}
-      rotation: {x: 0.7071069, y: -0.000000053385072, z: -0.00000005338509, w: 0.70710665}
-      scale: {x: 0.9999995, y: 0.9999999, z: 0.99999964}
+      position: {x: -0, y: 0, z: 1.806744}
+      rotation: {x: 0.70710665, y: 0.0000000069278556, z: -0.000000054889373, w: 0.7071069}
+      scale: {x: 0.99999976, y: 0.9999999, z: 0.9999999}
     - name: spine01
       parentName: root
       position: {x: -0, y: 0.19669092, z: 0}
-      rotation: {x: -3.1763736e-22, y: 0.00000003178652, z: -3.5527137e-15, w: 1}
+      rotation: {x: -1.3894327e-15, y: 0.00000003178652, z: 7.1054274e-15, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: spine02
       parentName: spine01
       position: {x: -0, y: 0.26083922, z: 0}
-      rotation: {x: -0, y: -0, z: 1.0096586e-29, w: 1}
+      rotation: {x: -0, y: -0, z: 4.416523e-23, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: spine03
       parentName: spine02
@@ -401,14 +395,14 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: neck
       parentName: spine03
-      position: {x: -0, y: 0.54436016, z: 0}
+      position: {x: 3.330669e-16, y: 0.5443602, z: -0.0000000037252903}
       rotation: {x: -0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
+      scale: {x: 1, y: 1, z: 1.0000002}
     - name: head
       parentName: neck
-      position: {x: -0, y: 0.1968894, z: 0}
+      position: {x: -1.110223e-16, y: 0.1968893, z: 0.0000000037252903}
       rotation: {x: -0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 0.99999994, z: 0.99999994}
+      scale: {x: 0.9999999, y: 0.9999999, z: 0.99999976}
     - name: head_end
       parentName: head
       position: {x: -0, y: 0.76786923, z: 0}
@@ -416,24 +410,24 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: shoulder.r
       parentName: spine03
-      position: {x: -0, y: 0.54436016, z: 0}
-      rotation: {x: 0.00000012316113, y: -0.00000015248122, z: 0.8132528, w: -0.5819106}
-      scale: {x: 0.9999999, y: 0.9999999, z: 1.0000002}
+      position: {x: 3.330669e-16, y: 0.5443602, z: -0.0000000037252903}
+      rotation: {x: 0.00000003375418, y: 0.00000011075453, z: 0.8132527, w: -0.5819107}
+      scale: {x: 1.0000004, y: 1.0000004, z: 1.0000002}
     - name: upperarm.r
       parentName: shoulder.r
-      position: {x: 0.00000017881393, y: 0.7828578, z: 0}
-      rotation: {x: -0.033488084, y: -0.009050148, z: 0.18150207, w: 0.98277855}
-      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000005}
+      position: {x: 0.000000003594323, y: 0.78285754, z: -0.000000007418798}
+      rotation: {x: -0.033488013, y: -0.009050134, z: 0.18150191, w: 0.98277855}
+      scale: {x: 1.0000001, y: 1.0000006, z: 1.0000005}
     - name: lowerarm.r
       parentName: upperarm.r
-      position: {x: -0.000000052154064, y: 0.6383103, z: 0.00000014156103}
-      rotation: {x: 0.07135995, y: 0.0020714914, z: -0.012905277, w: 0.997365}
-      scale: {x: 1.0000006, y: 1, z: 1.0000007}
+      position: {x: 0.0000000069849193, y: 0.6383105, z: -0.000000048428774}
+      rotation: {x: 0.071359925, y: 0.002071506, z: -0.012905103, w: 0.997365}
+      scale: {x: 1.0000001, y: 1.0000007, z: 1.0000011}
     - name: hand.r
       parentName: lowerarm.r
-      position: {x: -0.00000011920929, y: 0.65386283, z: -0.000000029802322}
-      rotation: {x: -0.07853311, y: 0.0000000020331044, z: 0.000000025561748, w: 0.9969116}
-      scale: {x: 1.0000006, y: 1.0000001, z: 1.0000007}
+      position: {x: -0.00000016577542, y: 0.65386283, z: -0.00000017881393}
+      rotation: {x: -0.07853305, y: -0.0000000068109873, z: -0.00000003280836, w: 0.9969115}
+      scale: {x: 0.99999976, y: 0.99999994, z: 1}
     - name: hand.r_end
       parentName: hand.r
       position: {x: -0, y: 0.37802768, z: 0}
@@ -441,24 +435,24 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: shoulder.l
       parentName: spine03
-      position: {x: -0, y: 0.54436016, z: 0}
-      rotation: {x: -0.000000025850479, y: 0.00000009287657, z: 0.81325287, w: 0.58191055}
-      scale: {x: 1.0000001, y: 1.0000002, z: 1.0000002}
+      position: {x: 3.330669e-16, y: 0.5443602, z: -0.0000000037252903}
+      rotation: {x: 0.000000003951843, y: 0.000000038257124, z: 0.81325305, w: 0.58191025}
+      scale: {x: 1.0000004, y: 1.0000005, z: 1.0000005}
     - name: upperarm.l
       parentName: shoulder.l
-      position: {x: -0.00000020861626, y: 0.7828576, z: -3.5527137e-15}
-      rotation: {x: -0.033488225, y: 0.009050127, z: -0.18150239, w: 0.98277843}
-      scale: {x: 1.0000011, y: 1.0000002, z: 1.000001}
+      position: {x: 0.0000002348097, y: 0.78285754, z: -0.0000000060218177}
+      rotation: {x: -0.03348796, y: 0.009050158, z: -0.18150222, w: 0.98277855}
+      scale: {x: 1, y: 1.0000001, z: 1.0000004}
     - name: lowerarm.l
       parentName: upperarm.l
-      position: {x: 0.00000006891787, y: 0.63831055, z: 0.000000037252903}
-      rotation: {x: 0.07136003, y: -0.0020715592, z: 0.012905318, w: 0.997365}
-      scale: {x: 1.0000006, y: 1.0000001, z: 1.0000005}
+      position: {x: 0.000000069790985, y: 0.63831025, z: -0.000000011175871}
+      rotation: {x: 0.071359515, y: -0.0020714842, z: 0.012904881, w: 0.997365}
+      scale: {x: 1.0000002, y: 1.0000007, z: 1.0000005}
     - name: hand.l
       parentName: lowerarm.l
-      position: {x: 0.000000024214387, y: 0.6538627, z: -0.000000059604645}
-      rotation: {x: -0.07853311, y: 0.000000004278043, z: -0.000000055575928, w: 0.9969116}
-      scale: {x: 1.0000008, y: 1.0000002, z: 1.0000007}
+      position: {x: 0.000000040978193, y: 0.6538626, z: 0.00000013038516}
+      rotation: {x: -0.0785331, y: -0.00000006733839, z: -0.000000099261285, w: 0.9969115}
+      scale: {x: 1, y: 1.0000006, z: 1.0000004}
     - name: hand.l_end
       parentName: hand.l
       position: {x: -0, y: 0.37802768, z: 0}
@@ -467,23 +461,23 @@ ModelImporter:
     - name: hip.r
       parentName: root
       position: {x: 0.50270003, y: 0.17230809, z: -0.00000008450323}
-      rotation: {x: 0.00000009887589, y: -0, z: 1, w: 1.15463195e-14}
+      rotation: {x: 0.00000009887588, y: -0, z: 1, w: 7.1054274e-15}
       scale: {x: 1, y: 1, z: 1}
     - name: upperleg.r
       parentName: hip.r
-      position: {x: 2.4868996e-14, y: 0.23732877, z: -5.0127145e-21}
-      rotation: {x: 0.06857666, y: -0.00000004988403, z: -0.000000006635313, w: 0.99764585}
-      scale: {x: 1, y: 0.9999999, z: 1.0000002}
+      position: {x: 2.4535929e-14, y: 0.23732877, z: -4.933305e-21}
+      rotation: {x: 0.06857666, y: -0.000000049884022, z: -0.0000000066352994, w: 0.99764585}
+      scale: {x: 0.99999994, y: 1.0000004, z: 1.0000004}
     - name: lowerleg.r
       parentName: upperleg.r
-      position: {x: -0.0000001014939, y: 0.68427485, z: -0.000000109028804}
-      rotation: {x: -0.119773, y: 0.0000000132154145, z: 0.000000015983497, w: 0.9928013}
-      scale: {x: 1, y: 0.9999995, z: 0.9999992}
+      position: {x: -0.0000000027939677, y: 0.684275, z: -0.000000011175871}
+      rotation: {x: -0.119773075, y: 0.0000000132153914, z: 0.000000015983487, w: 0.99280137}
+      scale: {x: 1, y: 0.99999964, z: 0.99999976}
     - name: foot.r
       parentName: lowerleg.r
-      position: {x: -0.00000002991304, y: 0.9118559, z: -0.00000007118235}
-      rotation: {x: -0.63157785, y: 0.000000048697096, z: 0.00000011554505, w: -0.77531254}
-      scale: {x: 1, y: 1.0000002, z: 1.0000001}
+      position: {x: 0.000000040299167, y: 0.9118559, z: -0.000000018004556}
+      rotation: {x: -0.6315779, y: 0.000000048697082, z: 0.00000011554503, w: -0.7753125}
+      scale: {x: 0.9999998, y: 1.0000007, z: 1.0000007}
     - name: foot.r_end
       parentName: foot.r
       position: {x: -0, y: 0.48489195, z: 0}
@@ -492,23 +486,23 @@ ModelImporter:
     - name: hip.l
       parentName: root
       position: {x: -0.50270003, y: 0.17230809, z: 0.000000067307965}
-      rotation: {x: 0.000000052119944, y: -0, z: 1, w: 6.217249e-15}
+      rotation: {x: 0.000000052119947, y: -0, z: 1, w: 4.440892e-15}
       scale: {x: 1, y: 1, z: 1}
     - name: upperleg.l
       parentName: hip.l
-      position: {x: 1.37667655e-14, y: 0.23732877, z: -1.3929722e-21}
-      rotation: {x: 0.06857666, y: 0.000000049884036, z: 0.0000000066353225, w: 0.99764585}
-      scale: {x: 1, y: 1.0000004, z: 1.0000002}
+      position: {x: 1.3544721e-14, y: 0.23732877, z: -1.3698111e-21}
+      rotation: {x: 0.06857666, y: 0.000000049884036, z: 0.000000006635317, w: 0.99764585}
+      scale: {x: 1, y: 1.0000005, z: 1.0000002}
     - name: lowerleg.l
       parentName: upperleg.l
-      position: {x: 0.00000009885388, y: 0.68427473, z: 0.000000016451594}
-      rotation: {x: -0.119773, y: -0.000000013215407, z: -0.00000001598349, w: 0.9928013}
-      scale: {x: 1, y: 0.99999934, z: 0.9999998}
+      position: {x: 0.00000008009374, y: 0.68427473, z: -0.000000007450581}
+      rotation: {x: -0.119773075, y: -0.0000000132153986, z: -0.000000015983492, w: 0.99280137}
+      scale: {x: 0.99999994, y: 0.99999976, z: 0.9999999}
     - name: foot.l
       parentName: lowerleg.l
-      position: {x: 0.000000072803076, y: 0.91185594, z: -0.000000045207397}
-      rotation: {x: -0.63157785, y: -0.000000048697096, z: -0.00000011554502, w: -0.77531254}
-      scale: {x: 1, y: 0.9999999, z: 1}
+      position: {x: 0.00000005448237, y: 0.9118558, z: 0.000000020489097}
+      rotation: {x: -0.6315779, y: -0.00000004869708, z: -0.00000011554504, w: -0.7753125}
+      scale: {x: 1, y: 0.99999976, z: 1}
     - name: foot.l_end
       parentName: foot.l
       position: {x: -0, y: 0.48489195, z: 0}
@@ -516,8 +510,8 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: IKLegPole.r
       parentName: Character
-      position: {x: -0.50270003, y: 0.73153514, z: 1.0912685}
-      rotation: {x: -0, y: -0.0000001192093, z: -7.1054274e-15, w: 1}
+      position: {x: -0.59601223, y: 0.73153514, z: 1.0912685}
+      rotation: {x: 0.000000059604645, y: -0.00000016292068, z: -0, w: 1}
       scale: {x: 1, y: 0.9999999, z: 0.9999999}
     - name: IKLegPole.r_end
       parentName: IKLegPole.r
@@ -526,9 +520,9 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: IKTargetFoot.r
       parentName: Character
-      position: {x: -0.50270003, y: 0.7357569, z: 0.6188268}
-      rotation: {x: 1, y: -0, z: -0.00000007549791, w: 0}
-      scale: {x: 1, y: 1, z: 1}
+      position: {x: -0.5760333, y: 0.000000008597638, z: 0.18423223}
+      rotation: {x: 1, y: 8.881784e-15, z: -0.000000031786517, w: -2.38361e-40}
+      scale: {x: 1, y: 0.9999999, z: 0.9999999}
     - name: IKTargetFoot.r_end
       parentName: IKTargetFoot.r
       position: {x: -0, y: 0.3860969, z: 0}
@@ -536,8 +530,8 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: IKLegPole.l
       parentName: Character
-      position: {x: 0.50270003, y: 0.73153514, z: 1.0912685}
-      rotation: {x: -0, y: 0.0000001192093, z: 7.1054274e-15, w: 1}
+      position: {x: 0.62059015, y: 0.73153514, z: 1.0912685}
+      rotation: {x: 0.000000059604645, y: 0.000000075497894, z: 7.1054274e-15, w: 1}
       scale: {x: 1, y: 0.9999999, z: 0.9999999}
     - name: IKLegPole.l_end
       parentName: IKLegPole.l
@@ -546,9 +540,9 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: IKTargetFoot.l
       parentName: Character
-      position: {x: 0.50270003, y: -0.7557891, z: 0.4852818}
-      rotation: {x: 1, y: -0, z: 0.00000007549791, w: 0}
-      scale: {x: 1, y: 1, z: 1}
+      position: {x: 0.575505, y: 0.15262154, z: 0.18423223}
+      rotation: {x: 1, y: 1.0658141e-14, z: 0.00000011920929, w: 8.93928e-40}
+      scale: {x: 1, y: 0.9999999, z: 0.9999999}
     - name: IKTargetFoot.l_end
       parentName: IKTargetFoot.l
       position: {x: -0, y: 0.3860969, z: 0}
