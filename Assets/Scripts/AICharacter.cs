@@ -32,6 +32,11 @@ public class AICharacter : MonoBehaviour
             Color col = new Color(Random.value, Random.value, Random.value, 1);
             mats[i].color = col;
         }
+
+        foreach(Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        {
+            rb.isKinematic = true;
+        }
     }
 
     void Seek(Vector3 location)
@@ -46,6 +51,9 @@ public class AICharacter : MonoBehaviour
 
     public void Kill()
     {
+        if(!alive) return;
+
+        alive = false;
         StartCoroutine(CoKill());
     }
 
@@ -54,15 +62,25 @@ public class AICharacter : MonoBehaviour
         yield return new WaitForFixedUpdate();
         agent.enabled = false;
         transform.position = transform.position + Vector3.up * 2;
-        alive = false;
         anim.enabled = false;
         Instantiate(ghostPrefab, transform.position, transform.rotation);
+
+        foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        {
+            rb.isKinematic = false;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         if(!alive) return;
+
+        if (tran.position.y < GameControl.instance.waterLevel)
+        {
+            Kill();
+            return;
+        }
 
         if(!scared)
         {
@@ -88,5 +106,7 @@ public class AICharacter : MonoBehaviour
             }
             else anim.SetBool("running", false);
         }
+
+        
     }
 }
