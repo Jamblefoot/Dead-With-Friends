@@ -26,6 +26,8 @@ public class AICharacter : MonoBehaviour
 
     public bool dontSpawnGhost = false;
 
+    Vector3 lastForward;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +52,8 @@ public class AICharacter : MonoBehaviour
         mainParent = tran.parent;
         if(currentSeat != null)
             EnterSeat(currentSeat);
+
+        lastForward = tran.forward;
     }
 
     void Seek(Vector3 location)
@@ -187,5 +191,16 @@ public class AICharacter : MonoBehaviour
         }
 
         
+    }
+
+    void LateUpdate()
+    {
+        if(possessed)
+        {
+            float rotChange = Vector3.SignedAngle(lastForward, tran.forward, Vector3.up);
+            GameControl.instance.followCam.ChangeXRotation(rotChange);
+        }
+
+        lastForward = tran.forward;
     }
 }

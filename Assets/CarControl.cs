@@ -8,6 +8,8 @@ public class CarControl : MonoBehaviour
     Rigidbody rigid;
 
     public Transform destination;
+    public Waypoint waypoint;
+    public bool wander = true;
     public Seat driverSeat;
     float stoppingDistance = 5f;
     float maxSpeed = 15f;
@@ -33,6 +35,11 @@ public class CarControl : MonoBehaviour
         List<Material> mats = new List<Material>();
         rend.GetMaterials(mats);
         mats[0].color = new Color(Random.value, Random.value, Random.value, 1);
+
+        if(wander && waypoint == null)
+        {
+            waypoint = FindNearestWaypoint();
+        }
     }
 
     // Update is called once per frame
@@ -78,7 +85,18 @@ public class CarControl : MonoBehaviour
         if (destination != null)
         {
             MoveTowardPosition(destination.position);
-            
+            return;
+        }
+
+        if(waypoint != null)
+        {
+            if(MoveTowardPosition(waypoint.transform.position) < 10f)
+            {
+                if(wander)
+                {
+                    waypoint = waypoint.connections[Random.Range(0, waypoint.connections.Length)];
+                }
+            }
         }
 
         //FUNCTIONALITY NEEDED
@@ -87,7 +105,7 @@ public class CarControl : MonoBehaviour
         // Explode when collide with static object or other car at high enough speed
     }
 
-    void MoveTowardPosition(Vector3 position)
+    float MoveTowardPosition(Vector3 position)
     {
 
 
@@ -133,5 +151,24 @@ public class CarControl : MonoBehaviour
             }
         }
         else currentSpeed = 0;
+
+        return dist;
+    }
+
+    Waypoint FindNearestWaypoint()
+    {
+        float dist = 5000;
+        Waypoint wp = null;
+        foreach(Waypoint w in FindObjectsOfType<Waypoint>())
+        {
+            float d = Vector3.Distance(tran.position, w.transform.position);
+            if(d < dist)
+            {
+                dist = d;
+                wp = w;
+            }
+        }
+
+        return wp;
     }
 }

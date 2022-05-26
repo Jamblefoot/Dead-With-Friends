@@ -483,6 +483,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {fileID: 0}
+  waypoint: {fileID: 0}
+  wander: 1
   driverSeat: {fileID: 7601092677782870933}
   groundLayers:
     serializedVersion: 2
