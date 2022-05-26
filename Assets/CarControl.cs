@@ -11,7 +11,7 @@ public class CarControl : MonoBehaviour
     public Seat driverSeat;
     float stoppingDistance = 5f;
     float maxSpeed = 15f;
-    float acceleration = 5f;
+    float acceleration = 50f;
     float rotSpeed = 5f;
 
     float currentSpeed = 0f;
@@ -71,7 +71,7 @@ public class CarControl : MonoBehaviour
 
         if(driverSeat.occupant.possessed)
         {
-            MoveTowardPosition(tran.position + tran.forward * vertical * -10 + tran.right * horizontal * -10);
+            MoveTowardPosition(tran.position + tran.forward * vertical * 10 + tran.right * horizontal * 10);
             return;
         }
 
@@ -89,6 +89,8 @@ public class CarControl : MonoBehaviour
 
     void MoveTowardPosition(Vector3 position)
     {
+
+
         Vector3 dest = position;
         dest.y = 0;
         Vector3 pos = tran.position;
@@ -98,21 +100,38 @@ public class CarControl : MonoBehaviour
 
         if (dist > stoppingDistance)
         {
+            int reverseMult = 1;
+            float dot = Vector3.Dot(tran.forward, (position - tran.position).normalized);
+            if(dot < -0.5f) reverseMult = -1;
+
             if (currentSpeed < maxSpeed)
                 currentSpeed += acceleration * Time.deltaTime;
 
-            rigid.AddForce(-tran.forward * currentSpeed * Time.deltaTime, ForceMode.VelocityChange);
+            rigid.AddForce(reverseMult * tran.forward * currentSpeed * Time.deltaTime, ForceMode.VelocityChange);
 
             for (int i = 0; i < axles.Length; i++)
             {
-                axles[i].localRotation = axles[i].localRotation * Quaternion.Euler(-5f, 0f, 0f);
+                axles[i].localRotation = axles[i].localRotation * Quaternion.Euler(reverseMult * 5f, 0f, 0f);
             }
 
             //Vector3 torque = Vector3.Cross(tran.forward, (destination.position - tran.position).normalized);
             //rigid.AddTorque(torque * 100f);
-            Vector3 rot = Vector3.RotateTowards(-tran.forward, (position - tran.position).normalized, Time.deltaTime * rotSpeed, 0);
-            float rotChange = Vector3.SignedAngle(-tran.forward, rot, tran.up);
-            rigid.AddTorque(tran.up * 2000f * rotChange);
+            if(!driverSeat.occupant.possessed)
+            {
+                Vector3 rot = Vector3.RotateTowards(tran.forward, (position - tran.position).normalized, Time.deltaTime * rotSpeed, 0);
+                float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
+                rigid.AddTorque(tran.up * 2000f * rotChange);
+            }
+            else
+            {
+                if(Mathf.Abs(horizontal) > 0.01f)
+                {
+                    Vector3 rot = Vector3.RotateTowards(tran.forward, (position - tran.position).normalized, Time.deltaTime * rotSpeed, 0);
+                    float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
+                    rigid.AddTorque(tran.up * 2000f * rotChange);
+                }
+            }
         }
+        else currentSpeed = 0;
     }
 }
