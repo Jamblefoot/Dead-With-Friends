@@ -598,6 +598,9 @@ MonoBehaviour:
   scared: 0
   ghostPrefab: {fileID: 6368891365658985190, guid: e4961a5ad9515644289e4cda4b439382, type: 3}
   alive: 1
+  currentSeat: {fileID: 0}
+  possessed: 0
+  head: {fileID: 3298312259913359796}
 --- !u!195 &1998515827517181741
 NavMeshAgent:
   m_ObjectHideFlags: 0
