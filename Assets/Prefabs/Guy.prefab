@@ -599,8 +599,14 @@ MonoBehaviour:
   ghostPrefab: {fileID: 6368891365658985190, guid: e4961a5ad9515644289e4cda4b439382, type: 3}
   alive: 1
   currentSeat: {fileID: 0}
+  seatLayers:
+    serializedVersion: 2
+    m_Bits: 1
   possessed: 0
-  head: {fileID: 3298312259913359796}
+  head: {fileID: 3542656282597667258}
+  dontSpawnGhost: 0
+  walkSpeed: 2
+  runSpeed: 10
 --- !u!195 &1998515827517181741
 NavMeshAgent:
   m_ObjectHideFlags: 0

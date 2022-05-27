@@ -19,6 +19,7 @@ public class CarControl : MonoBehaviour
     float currentSpeed = 0f;
 
     public LayerMask groundLayers;
+    public float groundDistance = 2f;
 
     public Transform[] axles;
 
@@ -67,7 +68,7 @@ public class CarControl : MonoBehaviour
 
     bool CheckGrounded()
     {
-        return Physics.Raycast(tran.position, -tran.up, 1f, groundLayers, QueryTriggerInteraction.Ignore);
+        return Physics.Raycast(tran.position, -tran.up, groundDistance, groundLayers, QueryTriggerInteraction.Ignore);
     }
 
     void FixedUpdate()
@@ -161,7 +162,7 @@ public class CarControl : MonoBehaviour
                 if(Mathf.Abs(horizontal) > 0.01f)
                 {
                     Vector3 rot = Vector3.RotateTowards(tran.forward, (position - tran.position).normalized, Time.deltaTime * rotSpeed, 0);
-                    float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
+                    float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up) * reverseMult;
                     rigid.AddTorque(tran.up * 2000f * rotChange);
                 }
             }

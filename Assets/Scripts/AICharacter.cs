@@ -18,10 +18,12 @@ public class AICharacter : MonoBehaviour
     public bool alive = true;
 
     public Seat currentSeat;
+    public LayerMask seatLayers;
 
     Transform mainParent;
 
     public bool possessed;
+    [Tooltip("this is the camera anchor point. If head moves, neck might be better")]
     public Transform head;
 
     public bool dontSpawnGhost = false;
@@ -33,6 +35,11 @@ public class AICharacter : MonoBehaviour
 
     bool followRigidbody = false;
     Rigidbody rigid;
+
+    public float walkSpeed = 2f;
+    public float runSpeed = 10f;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -68,10 +75,14 @@ public class AICharacter : MonoBehaviour
 
     void Seek(Vector3 location)
     {
+        if(!agent.enabled) return;
+
         agent.SetDestination(location);
     }
     void Flee(Vector3 location)
     {
+        if(!agent.enabled) return;
+
         Vector3 fleeVector = location - tran.position;
         agent.SetDestination(tran.position - fleeVector);
     }
@@ -121,6 +132,8 @@ public class AICharacter : MonoBehaviour
         
         seat.occupant = this;
         agent.enabled = false;
+        anim.SetBool("walking", false);
+        anim.SetBool("running", false);
         anim.SetBool("sitting", true);
         Collider col = seat.GetComponentInParent<Collider>();
         foreach(Collider c in GetComponentsInChildren<Collider>())
@@ -131,9 +144,8 @@ public class AICharacter : MonoBehaviour
         tran.localPosition = Vector3.zero;
         tran.localRotation = Quaternion.identity;
         currentSeat = seat;
-        
-
     }
+
     public void LeaveSeat()
     {
         anim.SetBool("sitting", false);
@@ -145,7 +157,33 @@ public class AICharacter : MonoBehaviour
         if(currentSeat != null && currentSeat.occupant == this)
             currentSeat.occupant = null;
 
+        /*if (currentSeat != null)
+        {
+            Collider col = currentSeat.GetComponentInParent<Collider>();
+            foreach (Collider c in GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(col, c, false);
+            }
+        }*/
+
         currentSeat = null;
+    }
+
+    bool CheckForSeat()
+    {
+        Debug.Log("Looking for seat");
+        RaycastHit hit;
+        if(Physics.Raycast(head.position, GameControl.instance.followCam.tran.forward, out hit, 2f, seatLayers, QueryTriggerInteraction.Collide))
+        {
+            Seat s = hit.transform.GetComponentInChildren<Seat>();
+            if(s != null && s.occupant == null)
+            {
+                EnterSeat(s);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Update is called once per frame
@@ -167,20 +205,42 @@ public class AICharacter : MonoBehaviour
             return;
         }
 
-        if(currentSeat != null) return;
+        if(currentSeat != null) 
+        {
+            if(possessed && Input.GetButtonDown("Fire2"))
+                LeaveSeat();
+
+            return;
+        }
 
         if (possessed)
         {
+            if(Input.GetButtonDown("Fire1"))
+            {
+                if(CheckForSeat()) return;
+            }
+
+            if(currentSeat != null) return;
+
             float vertical = Input.GetAxis("Vertical");
             float horizontal = Input.GetAxis("Horizontal");
+            bool sprint = Input.GetButton("Fire3");
 
             Seek(tran.position + Vector3.ProjectOnPlane(GameControl.instance.followCam.tran.forward * vertical * 5 + GameControl.instance.followCam.tran.right * horizontal * 5, Vector3.up));
 
-            anim.SetBool("running", false);
+            if(sprint) 
+            {
+                anim.SetBool("running", true);
+                agent.speed = runSpeed;
+            }
+            else 
+            {
+                anim.SetBool("running", false);
+                agent.speed = walkSpeed;
+            }
             if ((agent.destination - tran.position).magnitude > agent.stoppingDistance)
             {
                 anim.SetBool("walking", true);
-                agent.speed = 2;
             }
             else anim.SetBool("walking", false);
 
@@ -202,10 +262,11 @@ public class AICharacter : MonoBehaviour
                 }
             }
 
+            anim.SetBool("running", false);
             if((agent.destination - tran.position).magnitude > agent.stoppingDistance)
             {
                 anim.SetBool("walking", true);
-                agent.speed = 2;
+                agent.speed = walkSpeed;
             }
             else anim.SetBool("walking", false);
         }
@@ -217,7 +278,7 @@ public class AICharacter : MonoBehaviour
             if ((agent.destination - tran.position).magnitude > agent.stoppingDistance)
             {
                 anim.SetBool("running", true);
-                agent.speed = 10;
+                agent.speed = runSpeed;
             }
             else anim.SetBool("running", false);
         }

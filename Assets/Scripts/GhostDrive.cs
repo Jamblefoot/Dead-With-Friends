@@ -73,7 +73,7 @@ public class GhostDrive : MonoBehaviour
                 StopPossess();
                 return;
             }
-            tran.localPosition = Vector3.zero;
+            tran.localPosition = Vector3.up * 0.5f;//Vector3.zero;
             tran.rotation = tran.parent.rotation;
             return;
         }
@@ -140,7 +140,7 @@ public class GhostDrive : MonoBehaviour
     bool Possess()
     {
         RaycastHit hit;
-        if(Physics.Raycast(tran.position, tran.forward, out hit, 2f, characterLayer, QueryTriggerInteraction.Ignore))
+        if(Physics.Raycast(tran.position, followCam.tran.forward, out hit, 2f, characterLayer, QueryTriggerInteraction.Ignore))
         {
             AICharacter aic = hit.transform.GetComponentInParent<AICharacter>();
             if(!aic.alive) return false;
@@ -151,7 +151,7 @@ public class GhostDrive : MonoBehaviour
             rend.material = possessMaterial;
             rigid.isKinematic = true;
             tran.parent = possessed.head;
-            tran.localPosition = Vector3.zero;
+            tran.localPosition = Vector3.up * 0.5f;//Vector3.zero;
             tran.rotation = tran.parent.rotation;
             return true;
         }
@@ -165,7 +165,7 @@ public class GhostDrive : MonoBehaviour
         rend.material = possessMaterial;
         rigid.isKinematic = true;
         tran.parent = possessed.head;
-        tran.localPosition = Vector3.zero;
+        tran.localPosition = Vector3.up * 0.5f;//Vector3.zero;
         tran.rotation = tran.parent.rotation;
         return true;
     }
