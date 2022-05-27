@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GhostAI : MonoBehaviour
 {
-    Transform player;
+    GhostDrive player;
 
     public float speedMult = 0.1f;
     public float rotSpeedMult = 5f;
@@ -24,7 +24,7 @@ public class GhostAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = FindObjectOfType<GhostDrive>().transform;
+        player = FindObjectOfType<GhostDrive>();
         tran = transform;
         rigid = GetComponent<Rigidbody>();
 
@@ -50,11 +50,12 @@ public class GhostAI : MonoBehaviour
         }
 
         if(player == null) return;
+        if(player.stillAlive) return;
 
-        tran.LookAt(player, tran.up);
+        tran.LookAt(player.tran, tran.up);
 
         Vector3 move = Vector3.zero;
-        if((player.position - tran.position).sqrMagnitude > followDistance * followDistance)
+        if((player.tran.position - tran.position).sqrMagnitude > followDistance * followDistance)
         {
             move = tran.forward * speedMult;
         }

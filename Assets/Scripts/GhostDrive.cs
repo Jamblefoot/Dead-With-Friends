@@ -14,7 +14,7 @@ public class GhostDrive : MonoBehaviour
     float horCalced = 0f;
     float rotSpeed = 0f;
 
-    Transform tran;
+    public Transform tran;
     Rigidbody rigid;
     SkinnedMeshRenderer rend;
 
@@ -27,7 +27,7 @@ public class GhostDrive : MonoBehaviour
     Material normalMaterial;
     public Material possessMaterial;
 
-    bool stillAlive = false;
+    public bool stillAlive = false;
     // Start is called before the first frame update
     void Start()
     {

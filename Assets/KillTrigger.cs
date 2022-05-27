@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class KillTrigger : MonoBehaviour
 {
+    public bool dontKillSeated = false;
 
     void OnTriggerEnter(Collider col)
     {
         AICharacter aic = col.GetComponentInParent<AICharacter>();
         if(aic != null && aic.alive)
         {
-            aic.Kill();
+            if(dontKillSeated)
+            {
+                if(aic.currentSeat == null)
+                    aic.Kill();
+            }
+            else aic.Kill();
         }
     }
 }

@@ -28,12 +28,20 @@ public class AICharacter : MonoBehaviour
 
     Vector3 lastForward;
 
+    float wanderTime;
+    Vector3 wanderPos;
+
+    bool followRigidbody = false;
+    Rigidbody rigid;
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         tran = transform;
+
+        rigid = GetComponentInChildren<Rigidbody>();
 
         SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer>();
         List<Material> mats = new List<Material>();
@@ -54,6 +62,8 @@ public class AICharacter : MonoBehaviour
             EnterSeat(currentSeat);
 
         lastForward = tran.forward;
+
+        wanderPos = tran.position + new Vector3(Random.Range(-50f, 50f), 0f, Random.Range(-50f, 50f));
     }
 
     void Seek(Vector3 location)
@@ -90,6 +100,18 @@ public class AICharacter : MonoBehaviour
         {
             rb.isKinematic = false;
         }
+    }
+
+    public void Fall()
+    {
+        agent.enabled = false;
+        anim.enabled = false;
+        foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        {
+            rb.isKinematic = false;
+        }
+
+        followRigidbody = true;
     }
 
     public void EnterSeat(Seat seat)
@@ -169,6 +191,16 @@ public class AICharacter : MonoBehaviour
         {
             if(target != null)
                 Seek(target.position);
+            else 
+            {
+                Seek(wanderPos);
+                wanderTime -= Time.deltaTime;
+                if(wanderTime < 0f)
+                {
+                    wanderTime = Random.Range(10f, 30f);
+                    wanderPos = tran.position + new Vector3(Random.Range(-50f, 50f), 0f, Random.Range(-50f, 50f));
+                }
+            }
 
             if((agent.destination - tran.position).magnitude > agent.stoppingDistance)
             {
@@ -195,12 +227,30 @@ public class AICharacter : MonoBehaviour
 
     void LateUpdate()
     {
-        if(possessed)
+        if(tran.forward != lastForward)
         {
-            float rotChange = Vector3.SignedAngle(lastForward, tran.forward, Vector3.up);
-            GameControl.instance.followCam.ChangeXRotation(rotChange);
+            if(possessed)
+            {
+                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, Vector3.up);
+                GameControl.instance.followCam.ChangeXRotation(rotChange);
+            }
+
+            lastForward = tran.forward;
         }
 
-        lastForward = tran.forward;
+        if(followRigidbody && alive)
+        {
+            List<Transform> children = new List<Transform>();
+            foreach(Transform child in tran)
+            {
+                children.Add(child);
+                child.parent = null;
+            }
+            transform.position = rigid.position;
+            foreach(Transform child in children)
+            {
+                child.parent = tran;
+            }
+        }
     }
 }

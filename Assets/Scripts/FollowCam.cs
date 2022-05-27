@@ -38,7 +38,7 @@ public class FollowCam : MonoBehaviour
         yOffset -= Input.GetAxis("Mouse Y");
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
 
-        tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
+        //tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
 
         Vector3 camVector = (cameraTran.position - tran.position).normalized;
         RaycastHit hit;
@@ -56,6 +56,11 @@ public class FollowCam : MonoBehaviour
         lastPos = tran.position;
         cameraTran.position -= moveDelta;
         cameraTran.localPosition = Vector3.Lerp(cameraTran.localPosition, cameraTargetLocalPos, Time.deltaTime * 10);
+    }
+
+    void LateUpdate()
+    {
+        tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
     }
 
     public void ChangeXRotation(float change)

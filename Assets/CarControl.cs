@@ -23,6 +23,10 @@ public class CarControl : MonoBehaviour
     public Transform[] axles;
 
     float vertical, horizontal;
+
+    float stuckTimer;
+    float unstickTimer;
+    Vector3 lastPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +44,8 @@ public class CarControl : MonoBehaviour
         {
             waypoint = FindNearestWaypoint();
         }
+
+        lastPos = tran.position;
     }
 
     // Update is called once per frame
@@ -101,7 +107,6 @@ public class CarControl : MonoBehaviour
 
         //FUNCTIONALITY NEEDED
         // Regular driving mode - avoidance of pedestrians and other cars
-        // Reverse when stuck on something
         // Explode when collide with static object or other car at high enough speed
     }
 
@@ -116,11 +121,20 @@ public class CarControl : MonoBehaviour
 
         float dist = Vector3.Distance(dest, pos);
 
+        int reverseMult = 1;
+
         if (dist > stoppingDistance)
         {
-            int reverseMult = 1;
             float dot = Vector3.Dot(tran.forward, (position - tran.position).normalized);
             if(dot < -0.5f) reverseMult = -1;
+
+            bool forceTurn = false;
+            if(reverseMult == 1 && unstickTimer > 0f && !driverSeat.occupant.possessed)
+            {
+                reverseMult = -1;
+                unstickTimer -= Time.deltaTime;
+                forceTurn = true;
+            }
 
             if (currentSpeed < maxSpeed)
                 currentSpeed += acceleration * Time.deltaTime;
@@ -136,7 +150,9 @@ public class CarControl : MonoBehaviour
             //rigid.AddTorque(torque * 100f);
             if(!driverSeat.occupant.possessed)
             {
-                Vector3 rot = Vector3.RotateTowards(tran.forward, (position - tran.position).normalized, Time.deltaTime * rotSpeed, 0);
+                Vector3 dir = (position - tran.position).normalized;
+                if(forceTurn) dir = tran.right;
+                Vector3 rot = Vector3.RotateTowards(tran.forward, dir, Time.deltaTime * rotSpeed, 0);
                 float rotChange = Vector3.SignedAngle(tran.forward, rot, tran.up);
                 rigid.AddTorque(tran.up * 2000f * rotChange);
             }
@@ -151,6 +167,26 @@ public class CarControl : MonoBehaviour
             }
         }
         else currentSpeed = 0;
+
+        if(unstickTimer <= 0f)
+        {
+            if(Vector3.Distance(lastPos, tran.position) <= 0.1f)
+            {
+                if(stuckTimer < 5f)
+                    stuckTimer += Time.deltaTime;
+                else
+                {
+                    unstickTimer = 5f;
+                    stuckTimer = 0f;
+                }
+            }
+            else 
+            {
+                if(stuckTimer > 0f)
+                    stuckTimer -= Time.deltaTime;
+            }
+        }
+        lastPos = tran.position;
 
         return dist;
     }
