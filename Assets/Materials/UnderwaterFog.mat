@@ -58,7 +58,7 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.4
+    - _Density: 1
     - _DepthMax: 50
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -76,8 +76,8 @@ Material:
     - _WaterHeight: -7
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.33882165, g: 0.8582266, b: 0.8867924, a: 1}
-    - _DeepColor: {r: 0, g: 0, b: 0.3018868, a: 1}
+    - _Color: {r: 0.09825561, g: 0.29170525, b: 0.3018868, a: 1}
+    - _DeepColor: {r: 0.008098972, g: 0.008098972, b: 0.13207549, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _WorldCenter: {r: 0, g: 0, b: 0, a: 5}
   m_BuildTextureStacks: []

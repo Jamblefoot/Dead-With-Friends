@@ -197,7 +197,7 @@ public class AICharacter : MonoBehaviour
 
         if(!alive) return;
 
-        if (tran.position.y < GameControl.instance.waterLevel)
+        if (head.position.y < GameControl.instance.waterLevel)
         {
             //if(currentSeat != null)
             //    LeaveSeat();
