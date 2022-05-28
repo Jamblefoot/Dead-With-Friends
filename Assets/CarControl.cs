@@ -18,16 +18,20 @@ public class CarControl : MonoBehaviour
 
     float currentSpeed = 0f;
 
-    public LayerMask groundLayers;
-    public float groundDistance = 2f;
+    [SerializeField] LayerMask groundLayers;
+    [SerializeField] float groundDistance = 2f;
 
-    public Transform[] axles;
+    [SerializeField] Transform[] axles;
+    [SerializeField] AudioSource engineAudio;
+    [SerializeField] GameObject killbox;
 
     float vertical, horizontal;
 
     float stuckTimer;
     float unstickTimer;
     Vector3 lastPos;
+
+    float explodeTimer;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,7 +56,20 @@ public class CarControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(driverSeat.occupant == null) return;
+        float vel = rigid.velocity.magnitude;
+        if (vel < 5f)
+        {
+            killbox.SetActive(false);
+        }
+        else killbox.SetActive(true);
+
+
+        if(driverSeat.occupant == null) 
+        {
+            if(engineAudio.isPlaying)
+                engineAudio.Stop();
+            return;
+        }
 
         if(driverSeat.occupant.possessed)
         {
@@ -61,8 +78,16 @@ public class CarControl : MonoBehaviour
         }
         else
         {
-            vertical = 0; horizontal = 0;
+            vertical = 0; 
+            horizontal = 0;
         }
+
+        if(!engineAudio.isPlaying)
+            engineAudio.Play();
+        
+        engineAudio.volume = Mathf.Clamp(vel * 10, 0.2f, 1f);
+        engineAudio.pitch = Mathf.Clamp(vel / 6, 0.5f, 2f);
+
         
     }
 
@@ -80,7 +105,13 @@ public class CarControl : MonoBehaviour
         }
         else rigid.isKinematic = false;
 
-        if (!CheckGrounded()) return;
+        if (!CheckGrounded()) 
+        {
+            explodeTimer += Time.deltaTime;
+            return;
+        }
+        else explodeTimer = 0;
+
         if (driverSeat.occupant == null) return;
 
         if(driverSeat.occupant.possessed)
@@ -130,7 +161,7 @@ public class CarControl : MonoBehaviour
             if(dot < -0.5f) reverseMult = -1;
 
             bool forceTurn = false;
-            if(reverseMult == 1 && unstickTimer > 0f && !driverSeat.occupant.possessed)
+            if(unstickTimer > 0f && !driverSeat.occupant.possessed)
             {
                 reverseMult = -1;
                 unstickTimer -= Time.deltaTime;

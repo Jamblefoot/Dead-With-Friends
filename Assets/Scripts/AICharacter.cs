@@ -39,6 +39,9 @@ public class AICharacter : MonoBehaviour
     public float walkSpeed = 2f;
     public float runSpeed = 10f;
 
+    [SerializeField] AudioSource footstepAudio;
+    [SerializeField] AudioSource headAudio;
+
     
 
     // Start is called before the first frame update
@@ -92,6 +95,9 @@ public class AICharacter : MonoBehaviour
         if(!alive) return;
 
         alive = false;
+        headAudio.pitch = Random.Range(0.8f, 2f);
+        headAudio.PlayOneShot(GameControl.instance.GetDeathSound());
+        GameControl.instance.RemoveFromLiving(this);
         StartCoroutine(CoKill());
     }
 
@@ -173,7 +179,7 @@ public class AICharacter : MonoBehaviour
     {
         Debug.Log("Looking for seat");
         RaycastHit hit;
-        if(Physics.Raycast(head.position, GameControl.instance.followCam.tran.forward, out hit, 2f, seatLayers, QueryTriggerInteraction.Collide))
+        if(Physics.Raycast(head.position, GameControl.instance.followCam.tran.forward, out hit, 3f, seatLayers, QueryTriggerInteraction.Collide))
         {
             Seat s = hit.transform.GetComponentInChildren<Seat>();
             if(s != null && s.occupant == null)
@@ -313,5 +319,10 @@ public class AICharacter : MonoBehaviour
                 child.parent = tran;
             }
         }
+    }
+
+    public void Footstep()
+    {
+        footstepAudio.PlayOneShot(GameControl.instance.GetFootstep());
     }
 }

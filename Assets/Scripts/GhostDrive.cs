@@ -140,7 +140,7 @@ public class GhostDrive : MonoBehaviour
     bool Possess()
     {
         RaycastHit hit;
-        if(Physics.Raycast(tran.position, followCam.tran.forward, out hit, 2f, characterLayer, QueryTriggerInteraction.Ignore))
+        if(Physics.Raycast(tran.position, followCam.tran.forward, out hit, 3f, characterLayer, QueryTriggerInteraction.Ignore))
         {
             AICharacter aic = hit.transform.GetComponentInParent<AICharacter>();
             if(!aic.alive) return false;

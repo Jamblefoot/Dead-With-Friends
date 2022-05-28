@@ -9,6 +9,10 @@ public class GameControl : MonoBehaviour
     public static GameControl instance;
 
     public float gameTime = 0f;
+    public int livingCount;
+    List<AICharacter> people = new List<AICharacter>();
+    [SerializeField] Text timer;
+    [SerializeField] Text counter;
 
     public bool inMenu = false;
     
@@ -24,6 +28,10 @@ public class GameControl : MonoBehaviour
     [Header("SETTINGS")]
     [SerializeField] Dropdown qualityDropdown;
     [SerializeField] Dropdown aaDropdown;
+
+    [Header("AUDIO")]
+    [SerializeField] AudioClip[] footsteps;
+    [SerializeField] AudioClip[] deathSounds;
 
     // Start is called before the first frame update
     void Start()
@@ -47,13 +55,15 @@ public class GameControl : MonoBehaviour
         followCam = FindObjectOfType<FollowCam>();
 
         SetSettingsMenu();
+
+        foreach(AICharacter person in FindObjectsOfType<AICharacter>())
+        {
+            people.Add(person);
+        }
+        livingCount = people.Count;
     }
 
-    void SetSettingsMenu()
-    {
-        qualityDropdown.value = QualitySettings.GetQualityLevel();
-        SetAntialiasingDropdown();
-    }
+    
 
     // Update is called once per frame
     void Update()
@@ -79,8 +89,23 @@ public class GameControl : MonoBehaviour
 
         if(!inMenu)
         {
-            gameTime += Time.deltaTime;
+            livingCount = people.Count;
+            if(livingCount > 0)
+                gameTime += Time.deltaTime;
+            else
+            {
+                //do endgame stuff
+            }
+
+            timer.text = gameTime.ToString("F1");
+            counter.text = livingCount.ToString();
         }
+    }
+
+    public void RemoveFromLiving(AICharacter person)
+    {
+        if(people.Contains(person))
+            people.Remove(person);
     }
 
     public void QuitGame()
@@ -107,6 +132,16 @@ public class GameControl : MonoBehaviour
 
         settingsCanvas.gameObject.SetActive(value);
         menuCanvas.gameObject.SetActive(!value);
+    }
+
+    ///////////////\/\\\\\\\\\\\\\\\
+    /////       SETTINGS       \\\\\
+    ///////////////\/\\\\\\\\\\\\\\\
+
+    void SetSettingsMenu()
+    {
+        qualityDropdown.value = QualitySettings.GetQualityLevel();
+        SetAntialiasingDropdown();
     }
 
     public void SetQualityLevel()
@@ -151,5 +186,18 @@ public class GameControl : MonoBehaviour
                 QualitySettings.antiAliasing = 8;
                 break;
         }
+    }
+
+    //////////////\/\\\\\\\\\\\\\
+    /////       AUDIO       \\\\\
+    //////////////\/\\\\\\\\\\\\\
+
+    public AudioClip GetFootstep()
+    {
+        return footsteps[Random.Range(0, footsteps.Length)];
+    }
+    public AudioClip GetDeathSound()
+    {
+        return deathSounds[Random.Range(0, deathSounds.Length)];
     }
 }
