@@ -31,6 +31,8 @@ public class CarControl : MonoBehaviour
     float unstickTimer;
     Vector3 lastPos;
 
+    [SerializeField] GameObject smokeParticles;
+    [SerializeField] GameObject explosionPrefab;
     float explodeTimer;
     // Start is called before the first frame update
     void Start()
@@ -108,9 +110,23 @@ public class CarControl : MonoBehaviour
         if (!CheckGrounded()) 
         {
             explodeTimer += Time.deltaTime;
+
+            if(explodeTimer > 10f)
+            {
+                smokeParticles.SetActive(true);
+            }
+            if(explodeTimer > 20f)
+            {
+                Explode();
+            }
             return;
         }
-        else explodeTimer = 0;
+        else 
+        {
+            if(explodeTimer < 10f)
+                explodeTimer = 0;
+            else explodeTimer = 10f;
+        }
 
         if (driverSeat.occupant == null) return;
 
@@ -243,5 +259,22 @@ public class CarControl : MonoBehaviour
     public void ForceReverse()
     {
         unstickTimer = 5f;
+    }
+
+    void Explode()
+    {
+        if (driverSeat.occupant != null)
+            driverSeat.occupant.LeaveSeat();
+        foreach (Collider col in GetComponentsInChildren<Collider>())
+        {
+            if (col.GetComponent<Rigidbody>() == null)
+            {
+                col.transform.parent = null;
+                col.gameObject.AddComponent<Rigidbody>();
+            }
+        }
+        engineAudio.Stop();
+        Instantiate(explosionPrefab, tran.position, Quaternion.identity);
+        Destroy(this);
     }
 }
