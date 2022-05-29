@@ -121,6 +121,8 @@ public class AICharacter : MonoBehaviour
 
     public void Fall()
     {
+        if(followRigidbody) return;
+
         agent.enabled = false;
         anim.enabled = false;
         foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>())
@@ -131,6 +133,9 @@ public class AICharacter : MonoBehaviour
         followRigidbody = true;
 
         rigid.gameObject.AddComponent<KillOnNextCollide>();
+
+        headAudio.pitch = Random.Range(0.8f, 2f);
+        headAudio.PlayOneShot(GameControl.instance.GetScreamSound());
 
     }
 

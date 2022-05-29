@@ -32,6 +32,11 @@ public class GameControl : MonoBehaviour
     [SerializeField] Text screenmodeText;
     [SerializeField] Dropdown resolutionDropdown;
     [SerializeField] Dropdown vsyncDropdown;
+    [SerializeField] Dropdown anisotropicDropdown;
+    [SerializeField] Slider lodBiasSlider;
+    [SerializeField] Dropdown shadowDropdown;
+    [SerializeField] Slider shadowDistanceSlider;
+    [SerializeField] Dropdown shadowResDropdown;
 
     FullScreenMode lastScreenMode = FullScreenMode.ExclusiveFullScreen;
     //bool blockScreenmodeChange = false;
@@ -39,6 +44,7 @@ public class GameControl : MonoBehaviour
     [Header("AUDIO")]
     [SerializeField] AudioClip[] footsteps;
     [SerializeField] AudioClip[] deathSounds;
+    [SerializeField] AudioClip[] screamSounds;
 
     // Start is called before the first frame update
     void Start()
@@ -168,6 +174,11 @@ public class GameControl : MonoBehaviour
         SetResolutionDropdown();
         SetAntialiasingDropdown();
         SetVsyncDropdown();
+        SetAnisotropicDropdown();
+        SetLODBiasSlider();
+        SetShadowDropdown();
+        SetShadowDistanceSlider();
+        SetShadowResolutionDropdown();
     }
 
     public void SetQualityLevel()
@@ -179,8 +190,8 @@ public class GameControl : MonoBehaviour
     void SetScreenmodeText()
     {
         if (Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
-            screenmodeText.text = "FOR WINDOWED, PRESS ALT + F4";
-        else screenmodeText.text = "FOR FULLSCREEN, PRESS ALT + F4";
+            screenmodeText.text = "FOR WINDOWED, PRESS ALT + ENTER";
+        else screenmodeText.text = "FOR FULLSCREEN, PRESS ALT + ENTER";
     }
     /*void SetScreenmodeDropdown()
     {
@@ -261,6 +272,37 @@ public class GameControl : MonoBehaviour
         lastScreenMode = Screen.fullScreenMode;
     }
 
+    void SetAnisotropicDropdown()
+    {
+        switch(QualitySettings.anisotropicFiltering)
+        {
+            case AnisotropicFiltering.Disable:
+                anisotropicDropdown.value = 0;
+                break;
+            case AnisotropicFiltering.Enable:
+                anisotropicDropdown.value = 1;
+                break;
+            case AnisotropicFiltering.ForceEnable:
+                anisotropicDropdown.value = 2;
+                break;
+        }
+    }
+    public void SetAnisotropicFiltering()
+    {
+        switch(anisotropicDropdown.value)
+        {
+            case 0:
+                QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+                break;
+            case 1:
+                QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+                break;
+            case 2:
+                QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
+                break;
+        }
+    }
+
     void SetAntialiasingDropdown()
     {
         switch(QualitySettings.antiAliasing)
@@ -307,7 +349,91 @@ public class GameControl : MonoBehaviour
         QualitySettings.vSyncCount = vsyncDropdown.value;
     }
 
+    void SetLODBiasSlider()
+    {
+        lodBiasSlider.value = QualitySettings.lodBias;
+    }
+    public void SetLODBias()
+    {
+        QualitySettings.lodBias = lodBiasSlider.value;
+    }
 
+    void SetShadowDistanceSlider()
+    {
+        shadowDistanceSlider.value = QualitySettings.shadowDistance;
+    }
+    public void SetShadowDistance()
+    {
+        QualitySettings.shadowDistance = shadowDistanceSlider.value;
+    }
+
+    void SetShadowDropdown()
+    {
+        switch(QualitySettings.shadows)
+        {
+            case ShadowQuality.Disable:
+                shadowDropdown.value = 0;
+                break;
+            case ShadowQuality.HardOnly:
+                shadowDropdown.value = 1;
+                break;
+            case ShadowQuality.All:
+                shadowDropdown.value = 2;
+                break;
+        }
+    }
+    public void SetShadows()
+    {
+        switch(shadowDropdown.value)
+        {
+            case 0:
+                QualitySettings.shadows = ShadowQuality.Disable;
+                break;
+            case 1:
+                QualitySettings.shadows = ShadowQuality.HardOnly;
+                break;
+            case 2:
+                QualitySettings.shadows = ShadowQuality.All;
+                break;
+        }
+    }
+
+    void SetShadowResolutionDropdown()
+    {
+        switch(QualitySettings.shadowResolution)
+        {
+            case ShadowResolution.Low:
+                shadowResDropdown.value = 0;
+                break;
+            case ShadowResolution.Medium:
+                shadowResDropdown.value = 1;
+                break;
+            case ShadowResolution.High:
+                shadowResDropdown.value = 2;
+                break;
+            case ShadowResolution.VeryHigh:
+                shadowResDropdown.value = 3;
+                break;
+        }
+    }
+    public void SetShadowResolution()
+    {
+        switch(shadowResDropdown.value)
+        {
+            case 0:
+                QualitySettings.shadowResolution = ShadowResolution.Low;
+                break;
+            case 1:
+                QualitySettings.shadowResolution = ShadowResolution.Medium;
+                break;
+            case 2:
+                QualitySettings.shadowResolution = ShadowResolution.High;
+                break;
+            case 3:
+                QualitySettings.shadowResolution = ShadowResolution.VeryHigh;
+                break;
+        }
+    }
 
 
     //////////////\/\\\\\\\\\\\\\
@@ -321,5 +447,9 @@ public class GameControl : MonoBehaviour
     public AudioClip GetDeathSound()
     {
         return deathSounds[Random.Range(0, deathSounds.Length)];
+    }
+    public AudioClip GetScreamSound()
+    {
+        return screamSounds[Random.Range(0, screamSounds.Length)];
     }
 }
