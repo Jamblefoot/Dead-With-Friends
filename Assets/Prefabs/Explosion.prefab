@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2927240253e7145a09c6a120e537e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boomClip: {fileID: 8300000, guid: 1c66d544487de95409806a8efa3c16e8, type: 3}
 --- !u!135 &8465182682356018451
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -69,7 +68,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -8929074521412887844, guid: 5ae11134dbbd95f4686006c7f7c9b9cb, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 1c66d544487de95409806a8efa3c16e8, type: 3}
+  m_audioClip: {fileID: 8300000, guid: cb9d0e55ef033b44c8f397eabfaa9e8d, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

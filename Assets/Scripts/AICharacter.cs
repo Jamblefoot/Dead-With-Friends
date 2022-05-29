@@ -33,6 +33,14 @@ public class AICharacter : MonoBehaviour
     float wanderTime;
     Vector3 wanderPos;
 
+    Vector3 fleeVector = Vector3.zero;
+    float fleeTimer;
+    bool justSawGhost = false;
+
+    public bool onFire = false;
+    public float fireTimer;
+    float fireWanderTimer;
+
     bool followRigidbody = false;
     Rigidbody rigid;
 
@@ -134,8 +142,7 @@ public class AICharacter : MonoBehaviour
 
         rigid.gameObject.AddComponent<KillOnNextCollide>();
 
-        headAudio.pitch = Random.Range(0.8f, 2f);
-        headAudio.PlayOneShot(GameControl.instance.GetScreamSound());
+        Scream();
 
     }
 
@@ -219,6 +226,16 @@ public class AICharacter : MonoBehaviour
             return;
         }
 
+        if (onFire)
+        {
+            fireTimer -= Time.deltaTime;
+            if (fireTimer <= 0)
+            {
+                Kill();
+                return;
+            }
+        }
+
         if(currentSeat != null) 
         {
             if(possessed && Input.GetButtonDown("Fire2"))
@@ -261,8 +278,27 @@ public class AICharacter : MonoBehaviour
             return;
         }
 
+        if(fleeTimer > 0) fleeTimer -= Time.deltaTime;
+        else scared = false;
+
+        if(onFire)
+        {
+            scared = true;
+            fireWanderTimer -= Time.deltaTime;
+            if(fireWanderTimer <= 0)
+            {
+                Scream();
+                fireWanderTimer = Random.Range(1f, 5f);
+                fleeVector = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
+            }
+        }
+
         if(!scared)
         {
+
+            scared = LookForGhost();
+
+
             if(target != null)
                 Seek(target.position);
             else 
@@ -286,8 +322,12 @@ public class AICharacter : MonoBehaviour
         }
         else
         {
+            if(!onFire)
+                LookForGhost();
+
             if (target != null)
                 Flee(target.position);
+            else Flee(tran.position + fleeVector * 10);
 
             if ((agent.destination - tran.position).magnitude > agent.stoppingDistance)
             {
@@ -332,8 +372,41 @@ public class AICharacter : MonoBehaviour
         }
     }
 
+    bool LookForGhost()
+    {
+        if(GameControl.instance.player == null || GameControl.instance.player.parent != null) return false;
+
+        Vector3 ghostVector = GameControl.instance.player.position - tran.position;
+        if(ghostVector.sqrMagnitude <= 20f * 20f)
+        {
+            if(Vector3.Dot(tran.forward, ghostVector.normalized) > 0.5f)
+            {
+                fleeVector = ghostVector.normalized;
+                fleeTimer = Random.Range(10f, 30f);
+
+                if(!justSawGhost)
+                {
+                    justSawGhost = true;
+                    Scream();
+                }
+                return true;
+            }
+        }
+
+        justSawGhost = false;
+        return false;
+    }
+
     public void Footstep()
     {
+        if(GameControl.instance.inMenu) return;
+
         footstepAudio.PlayOneShot(GameControl.instance.GetFootstep());
+    }
+
+    public void Scream()
+    {
+        headAudio.pitch = Random.Range(0.8f, 2f);
+        headAudio.PlayOneShot(GameControl.instance.GetScreamSound());
     }
 }

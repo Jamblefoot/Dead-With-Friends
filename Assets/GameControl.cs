@@ -8,6 +8,8 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl instance;
 
+    public Transform player;
+
     public float gameTime = 0f;
     public int livingCount;
     List<AICharacter> people = new List<AICharacter>();
@@ -15,17 +17,28 @@ public class GameControl : MonoBehaviour
     [SerializeField] Text counter;
 
     public bool inMenu = false;
+    bool roundComplete = false;
+    bool endingGame = false;
+    bool isBestTime = false;
+    public string bestTimeName;
     
-    public Canvas menuCanvas;
-    public Canvas settingsCanvas;
-    public Canvas gameCanvas;
+    [Header("CANVASES")]
+    [SerializeField] Canvas menuCanvas;
+    [SerializeField] Canvas settingsCanvas;
+    [SerializeField] Canvas gameCanvas;
+    [SerializeField] Canvas scoreCanvas;
+    [SerializeField] Text gameText;
+    [SerializeField] Canvas saveTimeCanvas;
+    [SerializeField] InputField bestNameField;
+    [SerializeField] Canvas resetTimesConfirmCanvas;
 
+    [Header("WORLD SETTINGS")]
     public float waterLevel = 0;
     public Transform waterPlane;
 
     public FollowCam followCam;
 
-    [Header("SETTINGS")]
+    [Header("QUALITY SETTINGS")]
     [SerializeField] Dropdown qualityDropdown;
     [SerializeField] Dropdown aaDropdown;
     //[SerializeField] Dropdown screenmodeDropdown;
@@ -38,8 +51,11 @@ public class GameControl : MonoBehaviour
     [SerializeField] Slider shadowDistanceSlider;
     [SerializeField] Dropdown shadowResDropdown;
 
+    [SerializeField] Slider grassDistanceSlider;
+
     FullScreenMode lastScreenMode = FullScreenMode.ExclusiveFullScreen;
     //bool blockScreenmodeChange = false;
+    Terrain terrain;
 
     [Header("AUDIO")]
     [SerializeField] AudioClip[] footsteps;
@@ -55,12 +71,18 @@ public class GameControl : MonoBehaviour
         }
         else DestroyImmediate(gameObject);
 
+        player = FindObjectOfType<GhostDrive>().transform;
+
         Cursor.lockState = CursorLockMode.Locked;
+
+        terrain = FindObjectOfType<Terrain>();
 
         if (menuCanvas != null)
             menuCanvas.gameObject.SetActive(false);
         if (settingsCanvas != null)
             settingsCanvas.gameObject.SetActive(false);
+        if(scoreCanvas != null)
+            scoreCanvas.gameObject.SetActive(false);
 
         if(waterPlane != null)
             waterPlane.position = new Vector3(waterPlane.position.x, waterLevel, waterPlane.position.z);
@@ -96,6 +118,10 @@ public class GameControl : MonoBehaviour
                 Cursor.lockState = CursorLockMode.None;
                 if(menuCanvas != null)
                     menuCanvas.gameObject.SetActive(true);
+                if(isBestTime && saveTimeCanvas != null)
+                {
+                    saveTimeCanvas.gameObject.SetActive(true);
+                }
             }
             else 
             {
@@ -104,6 +130,10 @@ public class GameControl : MonoBehaviour
                     menuCanvas.gameObject.SetActive(false);
                 if(settingsCanvas != null)
                     settingsCanvas.gameObject.SetActive(false);
+                if (scoreCanvas != null)
+                    scoreCanvas.gameObject.SetActive(false);
+                if(saveTimeCanvas != null)
+                    saveTimeCanvas.gameObject.SetActive(false);
             }
         }
 
@@ -122,12 +152,38 @@ public class GameControl : MonoBehaviour
                 gameTime += Time.deltaTime;
             else
             {
-                //do endgame stuff
+                if(!roundComplete)
+                {
+                    roundComplete = true;
+                    isBestTime = HighScores.instance.CheckScorePlace(gameTime) < HighScores.COUNT;
+                    if(!endingGame)
+                        StartCoroutine(EndGameCo());
+                }
             }
 
             timer.text = gameTime.ToString("F1");
             counter.text = livingCount.ToString();
         }
+    }
+
+    IEnumerator EndGameCo()
+    {
+        endingGame = true;
+        gameText.text = "YOU DID IT!";
+        yield return new WaitForSeconds(5f);
+        gameText.text = "YOU MADE ALL THE FRIENDS!";
+        yield return new WaitForSeconds(5f);
+        gameText.text = "HOORAY!";
+        yield return new WaitForSeconds(5f);
+        if(isBestTime)
+        {
+            gameText.text = "AND IN RECORD TIME!";
+            yield return new WaitForSeconds(5f);
+            gameText.text = "DOUBLE HOORAY!";
+            yield return new WaitForSeconds(5f);
+        }
+        gameText.text = "";
+        endingGame = false;
     }
 
     public void RemoveFromLiving(AICharacter person)
@@ -162,6 +218,40 @@ public class GameControl : MonoBehaviour
         menuCanvas.gameObject.SetActive(!value);
     }
 
+    public void OpenScoreTable(bool value)
+    {
+        if (scoreCanvas == null) return;
+
+        scoreCanvas.gameObject.SetActive(value);
+        menuCanvas.gameObject.SetActive(!value);
+    }
+
+    public void SetBestTimeName()
+    {
+        bestTimeName = bestNameField.text.ToUpper();
+    }
+
+    public void SaveBestTime()
+    {
+        HighScores.instance.AddNewScore(gameTime, bestTimeName);
+        saveTimeCanvas.gameObject.SetActive(false);
+        isBestTime = false;
+        OpenScoreTable(true);
+    }
+
+    public void ForgetBestTime()
+    {
+        isBestTime = false;
+        saveTimeCanvas.gameObject.SetActive(false);
+    }
+
+    public void OpenResetTimesCanvas(bool value)
+    {
+        if(resetTimesConfirmCanvas == null) return;
+
+        resetTimesConfirmCanvas.gameObject.SetActive(value);
+    }
+
     ///////////////\/\\\\\\\\\\\\\\\
     /////       SETTINGS       \\\\\
     ///////////////\/\\\\\\\\\\\\\\\
@@ -179,6 +269,7 @@ public class GameControl : MonoBehaviour
         SetShadowDropdown();
         SetShadowDistanceSlider();
         SetShadowResolutionDropdown();
+        SetGrassDistanceSlider();
     }
 
     public void SetQualityLevel()
@@ -435,6 +526,15 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    void SetGrassDistanceSlider()
+    {
+        grassDistanceSlider.value = terrain.detailObjectDistance;
+    }
+    public void SetGrassDistance()
+    {
+        terrain.detailObjectDistance = grassDistanceSlider.value;
+    }
+
 
     //////////////\/\\\\\\\\\\\\\
     /////       AUDIO       \\\\\
@@ -451,5 +551,17 @@ public class GameControl : MonoBehaviour
     public AudioClip GetScreamSound()
     {
         return screamSounds[Random.Range(0, screamSounds.Length)];
+    }
+
+
+
+
+    //////////////\/\\\\\\\\\\\\\
+    /////       OTHER       \\\\\
+    //////////////\/\\\\\\\\\\\\\
+
+    public void OpenURL(string url)
+    {
+        Application.OpenURL(url);
     }
 }

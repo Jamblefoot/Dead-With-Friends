@@ -34,6 +34,10 @@ public class CarControl : MonoBehaviour
     [SerializeField] GameObject smokeParticles;
     [SerializeField] GameObject explosionPrefab;
     float explodeTimer;
+
+    bool menuState;
+    Vector3 velocity;
+    Vector3 angularVelocity;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +57,8 @@ public class CarControl : MonoBehaviour
         }
 
         lastPos = tran.position;
+
+        menuState = GameControl.instance.inMenu;
     }
 
     // Update is called once per frame
@@ -88,7 +94,7 @@ public class CarControl : MonoBehaviour
             engineAudio.Play();
         
         engineAudio.volume = Mathf.Clamp(vel * 10, 0.2f, 1f);
-        engineAudio.pitch = Mathf.Clamp(vel / 6, 0.5f, 2f);
+        engineAudio.pitch = Mathf.Clamp(vel / 6, 0.5f, 1.5f);
 
         
     }
@@ -100,12 +106,29 @@ public class CarControl : MonoBehaviour
 
     void FixedUpdate()
     {
+
+
         if (GameControl.instance.inMenu)
         {
+            if(menuState != GameControl.instance.inMenu)
+            {
+                menuState = GameControl.instance.inMenu;
+                velocity = rigid.velocity;
+                angularVelocity = rigid.angularVelocity;
+            }
             rigid.isKinematic = true;
             return;
         }
-        else rigid.isKinematic = false;
+        else 
+        {
+            rigid.isKinematic = false;
+            if(menuState != GameControl.instance.inMenu)
+            {
+                menuState = GameControl.instance.inMenu;
+                rigid.velocity = velocity;
+                rigid.angularVelocity = angularVelocity;
+            }
+        }
 
         if (!CheckGrounded()) 
         {

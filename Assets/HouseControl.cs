@@ -5,13 +5,36 @@ using UnityEngine;
 public class HouseControl : MonoBehaviour
 {
     public MeshRenderer[] wallRenderers;
+
+    public Color color = Color.black;
+
+    public GameObject destroyedPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
-        Color col = new Color(Random.value, Random.value, Random.value, 1);
+        color = new Color(Random.value, Random.value, Random.value, 1);
         foreach(MeshRenderer r in wallRenderers)
         {
-            r.material.color = col;
+            r.material.color = color;
         }
+    }
+
+    public void SetColor(Color col)
+    {
+        color = col;
+        foreach (MeshRenderer r in wallRenderers)
+        {
+            r.material.color = color;
+        }
+    }
+
+    public void Explode()
+    {
+        if(destroyedPrefab == null) return;
+
+        GameObject dp = Instantiate(destroyedPrefab, transform.position, transform.rotation);
+        dp.GetComponent<HouseControl>().SetColor(color);
+        Destroy(gameObject);
     }
 }
