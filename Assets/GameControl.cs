@@ -28,6 +28,13 @@ public class GameControl : MonoBehaviour
     [Header("SETTINGS")]
     [SerializeField] Dropdown qualityDropdown;
     [SerializeField] Dropdown aaDropdown;
+    //[SerializeField] Dropdown screenmodeDropdown;
+    [SerializeField] Text screenmodeText;
+    [SerializeField] Dropdown resolutionDropdown;
+    [SerializeField] Dropdown vsyncDropdown;
+
+    FullScreenMode lastScreenMode = FullScreenMode.ExclusiveFullScreen;
+    //bool blockScreenmodeChange = false;
 
     [Header("AUDIO")]
     [SerializeField] AudioClip[] footsteps;
@@ -54,6 +61,13 @@ public class GameControl : MonoBehaviour
 
         followCam = FindObjectOfType<FollowCam>();
 
+        List<string> resOptions = new List<string>();
+        foreach(Resolution r in Screen.resolutions)
+        {
+            resOptions.Add(r.ToString());
+        }
+        resolutionDropdown.ClearOptions();
+        resolutionDropdown.AddOptions(resOptions);
         SetSettingsMenu();
 
         foreach(AICharacter person in FindObjectsOfType<AICharacter>())
@@ -85,6 +99,14 @@ public class GameControl : MonoBehaviour
                 if(settingsCanvas != null)
                     settingsCanvas.gameObject.SetActive(false);
             }
+        }
+
+        if(Screen.fullScreenMode != lastScreenMode)
+        {
+            //SetScreenmodeDropdown();
+            lastScreenMode = Screen.fullScreenMode;
+            SetScreenmodeText();
+            //blockScreenmodeChange = true;
         }
 
         if(!inMenu)
@@ -141,13 +163,102 @@ public class GameControl : MonoBehaviour
     void SetSettingsMenu()
     {
         qualityDropdown.value = QualitySettings.GetQualityLevel();
+        //SetScreenmodeDropdown();
+        SetScreenmodeText();
+        SetResolutionDropdown();
         SetAntialiasingDropdown();
+        SetVsyncDropdown();
     }
 
     public void SetQualityLevel()
     {
         QualitySettings.SetQualityLevel(qualityDropdown.value, true);
         SetSettingsMenu();
+    }
+
+    void SetScreenmodeText()
+    {
+        if (Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
+            screenmodeText.text = "FOR WINDOWED, PRESS ALT + F4";
+        else screenmodeText.text = "FOR FULLSCREEN, PRESS ALT + F4";
+    }
+    /*void SetScreenmodeDropdown()
+    {
+        switch(Screen.fullScreenMode)
+        {
+            case FullScreenMode.ExclusiveFullScreen:
+                screenmodeDropdown.value = 0;
+                break;
+            case FullScreenMode.FullScreenWindow:
+                screenmodeDropdown.value = 1;
+                break;
+            case FullScreenMode.MaximizedWindow:
+                screenmodeDropdown.value = 2;
+                break;
+            case FullScreenMode.Windowed:
+                screenmodeDropdown.value = 3;
+                break;
+        }
+    }*/
+    /*public void SetScreenMode()
+    {
+        if(blockScreenmodeChange)
+        {
+            blockScreenmodeChange = false;
+            return;
+        }
+
+        switch(screenmodeDropdown.value)
+        {
+            case 0: //Exclusive Fullscreen
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case 1: //Fullscreen Window
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                break;
+            case 2: //Maximized Window
+                Screen.fullScreenMode = FullScreenMode.MaximizedWindow;
+                break;
+            case 3: //Windowed
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+                break;
+        }
+
+        SetResolution();
+    }*/
+
+    void SetResolutionDropdown()
+    {
+        int index = 0;
+        for(int i = 0; i < Screen.resolutions.Length; i++)
+        {
+            if(Screen.resolutions[i].width == Screen.width 
+                && Screen.resolutions[i].height == Screen.height
+                && Screen.resolutions[i].refreshRate == Screen.currentResolution.refreshRate)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        resolutionDropdown.value = index;
+    }
+    public void SetResolution()
+    {
+        Resolution res = Screen.resolutions[resolutionDropdown.value];
+        if(Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
+        {
+            res = Screen.currentResolution;
+            //Screen.fullScreen = true;
+            Screen.SetResolution(res.width, res.height, true, res.refreshRate);
+        }
+        else
+        {
+            //Screen.fullScreen = false;
+            Screen.SetResolution(res.width, res.height, false);
+        }
+
+        lastScreenMode = Screen.fullScreenMode;
     }
 
     void SetAntialiasingDropdown()
@@ -168,7 +279,6 @@ public class GameControl : MonoBehaviour
                 break;
         }
     }
-
     public void SetAntialiasing()
     {
         switch(aaDropdown.value)
@@ -187,6 +297,18 @@ public class GameControl : MonoBehaviour
                 break;
         }
     }
+
+    void SetVsyncDropdown()
+    {
+        vsyncDropdown.value = QualitySettings.vSyncCount;
+    }
+    public void SetVsync()
+    {
+        QualitySettings.vSyncCount = vsyncDropdown.value;
+    }
+
+
+
 
     //////////////\/\\\\\\\\\\\\\
     /////       AUDIO       \\\\\

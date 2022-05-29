@@ -33,6 +33,18 @@ public class GhostAI : MonoBehaviour
             SkinnedMeshRenderer rend = GetComponent<SkinnedMeshRenderer>();
             rend.material.SetTexture("_MainTex", faces[Random.Range(0, faces.Length)]);
         }
+
+        MoveAboveGround();
+    }
+
+    void MoveAboveGround()
+    {
+        if (!Physics.Raycast(tran.position, Vector3.down, Mathf.Infinity, groundLayers, QueryTriggerInteraction.Ignore))
+        {
+            RaycastHit hit;
+            Physics.Raycast(tran.position + Vector3.up * 1000, Vector3.down, out hit, 1000, groundLayers, QueryTriggerInteraction.Ignore);
+            tran.position = hit.point + Vector3.up;
+        }
     }
 
     void FixedUpdate()

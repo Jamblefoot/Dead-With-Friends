@@ -129,6 +129,9 @@ public class AICharacter : MonoBehaviour
         }
 
         followRigidbody = true;
+
+        rigid.gameObject.AddComponent<KillOnNextCollide>();
+
     }
 
     public void EnterSeat(Seat seat)
@@ -298,7 +301,7 @@ public class AICharacter : MonoBehaviour
         {
             if(possessed)
             {
-                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, Vector3.up);
+                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, tran.up);
                 GameControl.instance.followCam.ChangeXRotation(rotChange);
             }
 
@@ -318,6 +321,9 @@ public class AICharacter : MonoBehaviour
             {
                 child.parent = tran;
             }
+
+            if(rigid.IsSleeping())
+                Kill();
         }
     }
 

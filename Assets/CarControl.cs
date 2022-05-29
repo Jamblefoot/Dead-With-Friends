@@ -239,4 +239,9 @@ public class CarControl : MonoBehaviour
 
         return wp;
     }
+
+    public void ForceReverse()
+    {
+        unstickTimer = 5f;
+    }
 }

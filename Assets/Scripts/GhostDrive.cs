@@ -28,6 +28,10 @@ public class GhostDrive : MonoBehaviour
     public Material possessMaterial;
 
     public bool stillAlive = false;
+
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip inhaleClip;
+    [SerializeField] AudioClip exhaleClip;
     // Start is called before the first frame update
     void Start()
     {
@@ -153,6 +157,9 @@ public class GhostDrive : MonoBehaviour
             tran.parent = possessed.head;
             tran.localPosition = Vector3.up * 0.5f;//Vector3.zero;
             tran.rotation = tran.parent.rotation;
+
+            audioSource.pitch = Random.Range(0.8f, 1.5f);
+            audioSource.PlayOneShot(inhaleClip);
             return true;
         }
 
@@ -183,5 +190,20 @@ public class GhostDrive : MonoBehaviour
         tran.rotation = Quaternion.identity;
         //tran.LookAt(Vector3.ProjectOnPlane(tran.position + forward, Vector3.up).normalized, Vector3.up);
 
+        audioSource.pitch = 1;
+        audioSource.PlayOneShot(exhaleClip);
+
+        MoveAboveGround();
+
+    }
+
+    void MoveAboveGround()
+    {
+        if(!Physics.Raycast(tran.position, Vector3.down, Mathf.Infinity, groundLayers, QueryTriggerInteraction.Ignore))
+        {
+            RaycastHit hit;
+            Physics.Raycast(tran.position + Vector3.up * 1000, Vector3.down, out hit, 1000, groundLayers, QueryTriggerInteraction.Ignore);
+            tran.position = hit.point + Vector3.up;
+        }
     }
 }
