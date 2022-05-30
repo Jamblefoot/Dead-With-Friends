@@ -12,7 +12,7 @@ public class BreakTrigger : MonoBehaviour
     void OnTriggerEnter(Collider col)
     {
         AICharacter aic = col.GetComponentInParent<AICharacter>();
-        if(aic != null || col.GetComponent<KillTrigger>())
+        if(aic != null || col.GetComponent<KillTrigger>() || col.GetComponent<Explosion>())
         {
             foreach(Rigidbody rb in rigids)
             {

@@ -303,7 +303,7 @@ Shader "Stufco/WaterSurface"
         ENDCG
     }
     //}
-    //FallBack "Diffuse"
+    FallBack "Diffuse"
 }
 
 
