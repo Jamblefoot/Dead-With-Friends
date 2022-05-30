@@ -18,7 +18,7 @@ public class Explosion : MonoBehaviour
                 aic.LeaveSeat();
             aic.Fall();
         }
-        if(col.attachedRigidbody != null)
+        if(col.attachedRigidbody != null && !col.attachedRigidbody.isKinematic)
         {
             float force = 1500f;
             if(col.attachedRigidbody.mass > 100f)//is a car
@@ -26,12 +26,21 @@ public class Explosion : MonoBehaviour
                 force = col.attachedRigidbody.mass * 1000;
             }
             col.attachedRigidbody.AddExplosionForce(force, transform.position, 10, 0.5f, ForceMode.Force);
+
+            return;
         }
 
         HouseControl hc = col.GetComponentInParent<HouseControl>();
         if(hc != null)
         {
             hc.Explode();
+            return;
+        }
+
+        PropaneTank pt = col.GetComponent<PropaneTank>();
+        if(pt != null) 
+        {
+            pt.Explode();
         }
     }
 }

@@ -8,10 +8,6 @@ public class GhostAI : MonoBehaviour
 
     public float speedMult = 0.1f;
     public float rotSpeedMult = 5f;
-    //float acceleration = 10f;
-    //float vertCalced = 0f;
-    //float horCalced = 0f;
-    //float rotSpeed = 0f;
 
     Transform tran;
     Rigidbody rigid;

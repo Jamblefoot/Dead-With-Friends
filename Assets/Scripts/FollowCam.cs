@@ -67,4 +67,10 @@ public class FollowCam : MonoBehaviour
     {
         xOffset -= change;
     }
+
+    public void ChangeDistance(float change)
+    {
+        cameraTargetLocalPos = cameraTargetLocalPos * (change / followDistance);
+        followDistance = change;
+    }
 }

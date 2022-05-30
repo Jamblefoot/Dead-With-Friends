@@ -71,7 +71,12 @@ public class HighScores : MonoBehaviour
 
             
         }
-        else Debug.LogError("There is no save data!");
+        else 
+        {
+            Debug.LogError("There is no save data!");
+            scores[0].name = "MARK";
+            scores[0].time = 219.7135f;
+        }
 
         
     }
@@ -81,7 +86,14 @@ public class HighScores : MonoBehaviour
         if(File.Exists(Application.persistentDataPath + fileName))
         {
             File.Delete(Application.persistentDataPath + fileName);
-            Score[] scores = new Score[COUNT];
+            //Score[] scores = new Score[COUNT];
+            scores[0].name = "MARK";
+            scores[0].time = 219.7135f;
+            for(int i = 1; i < COUNT; i++)
+            {
+                scores[i].name = "";
+                scores[i].time = 0f;
+            }
             Debug.Log("Data reset complete!");
         }
         else Debug.Log("No data to delete!");

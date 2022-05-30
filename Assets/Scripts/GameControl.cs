@@ -32,6 +32,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] InputField bestNameField;
     [SerializeField] Canvas resetTimesConfirmCanvas;
     [SerializeField] Canvas tutorialCanvas;
+    [SerializeField] Canvas creditsCanvas;
 
     [Header("WORLD SETTINGS")]
     public float waterLevel = 0;
@@ -86,6 +87,8 @@ public class GameControl : MonoBehaviour
             scoreCanvas.gameObject.SetActive(false);
         if(tutorialCanvas != null)
             tutorialCanvas.gameObject.SetActive(false);
+        if(creditsCanvas != null)
+            creditsCanvas.gameObject.SetActive(false);
 
         if(waterPlane != null)
             waterPlane.position = new Vector3(waterPlane.position.x, waterLevel, waterPlane.position.z);
@@ -139,6 +142,8 @@ public class GameControl : MonoBehaviour
                     saveTimeCanvas.gameObject.SetActive(false);
                 if(tutorialCanvas != null)
                     tutorialCanvas.gameObject.SetActive(false);
+                if(creditsCanvas != null)
+                    creditsCanvas.gameObject.SetActive(false);
             }
         }
 
@@ -236,6 +241,14 @@ public class GameControl : MonoBehaviour
         if (tutorialCanvas == null) return;
 
         tutorialCanvas.gameObject.SetActive(value);
+        menuCanvas.gameObject.SetActive(!value);
+    }
+
+    public void OpenCredits(bool value)
+    {
+        if (creditsCanvas == null) return;
+
+        creditsCanvas.gameObject.SetActive(value);
         menuCanvas.gameObject.SetActive(!value);
     }
 

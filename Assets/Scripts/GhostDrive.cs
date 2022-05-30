@@ -33,6 +33,10 @@ public class GhostDrive : MonoBehaviour
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip inhaleClip;
     [SerializeField] AudioClip exhaleClip;
+
+    [SerializeField] GameObject cloudPrefab;
+    bool isCloud = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +61,7 @@ public class GhostDrive : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(stillAlive) return;
+        if(stillAlive || isCloud) return;
 
         vertical = Input.GetAxis("Vertical") * speedMult;
         vertCalced = Mathf.Lerp(vertCalced, vertical, Time.deltaTime * acceleration);
@@ -70,10 +74,17 @@ public class GhostDrive : MonoBehaviour
                 Possess();
             else StopPossess();
         }
+
+        if(GameControl.instance.livingCount <= 0 && tran.position.y > 150f)
+        {
+            BecomeCloud();
+        }
     }
 
     void FixedUpdate()
     {
+        if(isCloud) return;
+
         if(possessing) 
         {
             if(!possessed.alive)
@@ -128,10 +139,14 @@ public class GhostDrive : MonoBehaviour
                 rotSpeed = 0f;
             }
         }
-        else
+        else //followCam = null
         {
             move = tran.forward * vertCalced + tran.right * horCalced;
         }
+
+        
+        if (tran.position.y < GameControl.instance.waterLevel)
+            move = move * 0.25f + followCam.tran.forward * Mathf.Abs(Vector3.Dot(followCam.tran.forward, Vector3.up)) * vertCalced;
 
         if(rigid == null)
             tran.position += move;
@@ -148,7 +163,7 @@ public class GhostDrive : MonoBehaviour
     bool Possess()
     {
         RaycastHit hit;
-        if(Physics.Raycast(tran.position, followCam.tran.forward, out hit, 3f, characterLayer, QueryTriggerInteraction.Ignore))
+        if(Physics.SphereCast(tran.position, 1f, followCam.tran.forward, out hit, 3f, characterLayer, QueryTriggerInteraction.Ignore))
         {
             AICharacter aic = hit.transform.GetComponentInParent<AICharacter>();
             if(!aic.alive) return false;
@@ -208,6 +223,20 @@ public class GhostDrive : MonoBehaviour
             RaycastHit hit;
             Physics.Raycast(tran.position + Vector3.up * 1000, Vector3.down, out hit, 1000, groundLayers, QueryTriggerInteraction.Ignore);
             tran.position = hit.point + Vector3.up;
+        }
+    }
+
+    void BecomeCloud()
+    {
+        isCloud = true;
+        rend.enabled = false;
+        rigid.isKinematic = true;
+        followCam.ChangeDistance(50);
+        Instantiate(cloudPrefab, tran.position, tran.rotation);
+
+        foreach(GhostAI g in FindObjectsOfType<GhostAI>())
+        {
+            g.gameObject.SetActive(false);
         }
     }
 }
