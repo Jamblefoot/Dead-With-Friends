@@ -564,4 +564,11 @@ public class GameControl : MonoBehaviour
     {
         Application.OpenURL(url);
     }
+
+    public AICharacter GetRandomPerson()
+    {
+        if(people.Count <= 0) return null;
+
+        return people[Random.Range(0, people.Count)];
+    }
 }

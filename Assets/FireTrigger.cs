@@ -51,40 +51,41 @@ public class FireTrigger : MonoBehaviour
                 return;
 
             GameObject fire = Instantiate(firePrefab, col.transform.position, col.transform.rotation, col.transform);
+            fire.transform.localScale = Vector3.one;
+            BoxCollider bc = fire.GetComponent<BoxCollider>();
             if(col.GetComponent<BoxCollider>())
             {
-                fire.GetComponent<BoxCollider>().size = col.GetComponent<BoxCollider>().size * 1.1f;
+                BoxCollider colBC = col.GetComponent<BoxCollider>();
+                bc.size = colBC.size * 1.1f;
+                bc.center = colBC.center;
                 return;
             }
             else if(col.GetComponent<SphereCollider>())
             {
-                float size = col.GetComponent<SphereCollider>().radius * 2;
-                fire.GetComponent<BoxCollider>().size = new Vector3(size, size, size);
+                SphereCollider sph = col.GetComponent<SphereCollider>();
+                float size = sph.radius * 2.1f;
+                bc.size = new Vector3(size, size, size);
+                bc.center = sph.center;
                 return;
             }
             else if(col.GetComponent<CapsuleCollider>())
             {
                 CapsuleCollider cap = col.GetComponent<CapsuleCollider>();
-                Vector3 size = Vector3.zero;
+                Vector3 size = new Vector3(cap.radius * 2.1f, cap.radius * 2.1f, cap.radius * 2.1f);
                 switch(cap.direction)
                 {
                     case 0://x alignment
-                        size.x = Mathf.Max(cap.height, cap.radius * 2);
-                        size.y = cap.radius * 2;
-                        size.z = cap.radius * 2;
+                        size.x = Mathf.Max(cap.height, size.x);
                         break;
                     case 1://y alignment
-                        size.y = Mathf.Max(cap.height, cap.radius * 2);
-                        size.x = cap.radius * 2;
-                        size.z = cap.radius * 2;
+                        size.y = Mathf.Max(cap.height, size.y);
                         break;
                     case 2://z alignment
-                        size.z = Mathf.Max(cap.height, cap.radius * 2);
-                        size.y = cap.radius * 2;
-                        size.x = cap.radius * 2;
+                        size.z = Mathf.Max(cap.height, size.z);
                         break;
                 }
-                fire.GetComponent<BoxCollider>().size = size;
+                bc.size = size;
+                bc.center = cap.center;
             }
         }
     }

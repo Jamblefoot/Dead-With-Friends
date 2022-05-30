@@ -42,7 +42,8 @@ public class AICharacter : MonoBehaviour
     float fireWanderTimer;
 
     bool followRigidbody = false;
-    Rigidbody rigid;
+    //Rigidbody rigid;
+    Rigidbody[] rigids;
 
     public float walkSpeed = 2f;
     public float runSpeed = 10f;
@@ -50,6 +51,10 @@ public class AICharacter : MonoBehaviour
     [SerializeField] AudioSource footstepAudio;
     [SerializeField] AudioSource headAudio;
 
+    bool menuState;
+    Vector3[] velocities;
+    Vector3[] angularVelocities;
+    bool floppy = false;
     
 
     // Start is called before the first frame update
@@ -59,7 +64,8 @@ public class AICharacter : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         tran = transform;
 
-        rigid = GetComponentInChildren<Rigidbody>();
+        //rigid = GetComponentInChildren<Rigidbody>();
+        rigids = GetComponentsInChildren<Rigidbody>();
 
         SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer>();
         List<Material> mats = new List<Material>();
@@ -70,10 +76,12 @@ public class AICharacter : MonoBehaviour
             mats[i].color = col;
         }
 
-        foreach(Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        foreach(Rigidbody rb in rigids)
         {
             rb.isKinematic = true;
         }
+        velocities = new Vector3[rigids.Length];
+        angularVelocities = new Vector3[rigids.Length];
 
         mainParent = tran.parent;
         if(currentSeat != null)
@@ -82,6 +90,8 @@ public class AICharacter : MonoBehaviour
         lastForward = tran.forward;
 
         wanderPos = tran.position + new Vector3(Random.Range(-50f, 50f), 0f, Random.Range(-50f, 50f));
+
+        menuState = GameControl.instance.inMenu;
     }
 
     void Seek(Vector3 location)
@@ -121,10 +131,11 @@ public class AICharacter : MonoBehaviour
         if(!dontSpawnGhost)
             Instantiate(ghostPrefab, transform.position, transform.rotation);
 
-        foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        foreach (Rigidbody rb in rigids)
         {
             rb.isKinematic = false;
         }
+        floppy = true;
     }
 
     public void Fall()
@@ -133,14 +144,15 @@ public class AICharacter : MonoBehaviour
 
         agent.enabled = false;
         anim.enabled = false;
-        foreach (Rigidbody rb in GetComponentsInChildren<Rigidbody>())
+        foreach (Rigidbody rb in rigids)
         {
             rb.isKinematic = false;
         }
+        floppy = true;
 
         followRigidbody = true;
 
-        rigid.gameObject.AddComponent<KillOnNextCollide>();
+        rigids[0].gameObject.AddComponent<KillOnNextCollide>();
 
         Scream();
 
@@ -213,7 +225,36 @@ public class AICharacter : MonoBehaviour
         if(GameControl.instance.inMenu) 
         {
             agent.speed = 0;
+            if(!menuState)
+            {
+                menuState = true;
+                if(floppy)
+                {
+                    for(int i = 0; i < rigids.Length; i++)
+                    {
+                        velocities[i] = rigids[i].velocity;
+                        angularVelocities[i] = rigids[i].angularVelocity;
+                        rigids[i].isKinematic = true;
+                    }
+                }
+            }
             return;
+        }
+        else
+        {
+            if(menuState)
+            {
+                menuState = false;
+                if(floppy)
+                {
+                    for(int i = 0; i < rigids.Length; i++)
+                    {
+                        rigids[i].isKinematic = false;
+                        rigids[i].velocity = velocities[i];
+                        rigids[i].angularVelocity = angularVelocities[i];
+                    }
+                }
+            }
         }
 
         if(!alive) return;
@@ -361,13 +402,13 @@ public class AICharacter : MonoBehaviour
                 children.Add(child);
                 child.parent = null;
             }
-            transform.position = rigid.position;
+            transform.position = rigids[0].position;
             foreach(Transform child in children)
             {
                 child.parent = tran;
             }
 
-            if(rigid.IsSleeping())
+            if(rigids[0].IsSleeping())
                 Kill();
         }
     }

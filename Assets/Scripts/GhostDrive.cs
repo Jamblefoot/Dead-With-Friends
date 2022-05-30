@@ -41,6 +41,8 @@ public class GhostDrive : MonoBehaviour
         rend = GetComponent<SkinnedMeshRenderer>();
         normalMaterial = rend.material;
 
+        possessed = GameControl.instance.GetRandomPerson();
+
         if(possessed != null)
         {
             rend.enabled = false;
