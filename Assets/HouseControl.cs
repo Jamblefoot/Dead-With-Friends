@@ -10,9 +10,13 @@ public class HouseControl : MonoBehaviour
 
     public GameObject destroyedPrefab;
 
+    public bool blockRecolor = false;
+
     // Start is called before the first frame update
     void Start()
     {
+        if(blockRecolor) return;
+
         color = new Color(Random.value, Random.value, Random.value, 1);
         foreach(MeshRenderer r in wallRenderers)
         {
@@ -27,6 +31,8 @@ public class HouseControl : MonoBehaviour
         {
             r.material.color = color;
         }
+
+        blockRecolor = true;
     }
 
     public void Explode()

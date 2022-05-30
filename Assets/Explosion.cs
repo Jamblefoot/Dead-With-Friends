@@ -27,5 +27,11 @@ public class Explosion : MonoBehaviour
             }
             col.attachedRigidbody.AddExplosionForce(force, transform.position, 10, 0.5f, ForceMode.Force);
         }
+
+        HouseControl hc = col.GetComponentInParent<HouseControl>();
+        if(hc != null)
+        {
+            hc.Explode();
+        }
     }
 }

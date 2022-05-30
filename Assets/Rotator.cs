@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Rotator : MonoBehaviour
 {
-    float rotSpeed = 100f;
-    int rotAxis = 2;
+    public float rotSpeed = 100f;
+    public int rotAxis = 2;
 
     Transform tran;
     // Start is called before the first frame update

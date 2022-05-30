@@ -7,6 +7,8 @@ public class BreakTrigger : MonoBehaviour
     public Rigidbody[] rigids;
 
     public GameObject[] objectsToActivate;
+
+    [SerializeField] bool killOnContact = true;
     void OnTriggerEnter(Collider col)
     {
         AICharacter aic = col.GetComponentInParent<AICharacter>();
@@ -21,7 +23,7 @@ public class BreakTrigger : MonoBehaviour
                 go.SetActive(true);
             }
 
-            if(aic.currentSeat == null)
+            if(aic.currentSeat == null && killOnContact)
             {
                 aic.Fall();
             }

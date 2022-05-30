@@ -285,6 +285,9 @@ public class AICharacter : MonoBehaviour
             return;
         }
 
+        if(!agent.isOnNavMesh)
+            Fall();
+
         if (possessed)
         {
             if(Input.GetButtonDown("Fire1"))

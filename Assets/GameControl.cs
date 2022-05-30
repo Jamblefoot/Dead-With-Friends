@@ -31,6 +31,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] Canvas saveTimeCanvas;
     [SerializeField] InputField bestNameField;
     [SerializeField] Canvas resetTimesConfirmCanvas;
+    [SerializeField] Canvas tutorialCanvas;
 
     [Header("WORLD SETTINGS")]
     public float waterLevel = 0;
@@ -83,6 +84,8 @@ public class GameControl : MonoBehaviour
             settingsCanvas.gameObject.SetActive(false);
         if(scoreCanvas != null)
             scoreCanvas.gameObject.SetActive(false);
+        if(tutorialCanvas != null)
+            tutorialCanvas.gameObject.SetActive(false);
 
         if(waterPlane != null)
             waterPlane.position = new Vector3(waterPlane.position.x, waterLevel, waterPlane.position.z);
@@ -134,6 +137,8 @@ public class GameControl : MonoBehaviour
                     scoreCanvas.gameObject.SetActive(false);
                 if(saveTimeCanvas != null)
                     saveTimeCanvas.gameObject.SetActive(false);
+                if(tutorialCanvas != null)
+                    tutorialCanvas.gameObject.SetActive(false);
             }
         }
 
@@ -226,6 +231,14 @@ public class GameControl : MonoBehaviour
         menuCanvas.gameObject.SetActive(!value);
     }
 
+    public void OpenTutorial(bool value)
+    {
+        if (tutorialCanvas == null) return;
+
+        tutorialCanvas.gameObject.SetActive(value);
+        menuCanvas.gameObject.SetActive(!value);
+    }
+
     public void SetBestTimeName()
     {
         bestTimeName = bestNameField.text.ToUpper();
@@ -251,6 +264,8 @@ public class GameControl : MonoBehaviour
 
         resetTimesConfirmCanvas.gameObject.SetActive(value);
     }
+
+    
 
     ///////////////\/\\\\\\\\\\\\\\\
     /////       SETTINGS       \\\\\

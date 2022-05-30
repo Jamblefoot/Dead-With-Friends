@@ -27,6 +27,7 @@ public class GhostDrive : MonoBehaviour
     Material normalMaterial;
     public Material possessMaterial;
 
+    [SerializeField] bool randomStart = true;
     public bool stillAlive = false;
 
     [SerializeField] AudioSource audioSource;
@@ -41,7 +42,8 @@ public class GhostDrive : MonoBehaviour
         rend = GetComponent<SkinnedMeshRenderer>();
         normalMaterial = rend.material;
 
-        possessed = GameControl.instance.GetRandomPerson();
+        if(randomStart)
+            possessed = GameControl.instance.GetRandomPerson();
 
         if(possessed != null)
         {
