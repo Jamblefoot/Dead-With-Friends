@@ -12,23 +12,33 @@ public class BreakTrigger : MonoBehaviour
     void OnTriggerEnter(Collider col)
     {
         AICharacter aic = col.GetComponentInParent<AICharacter>();
-        if(aic != null || col.GetComponent<KillTrigger>() || col.GetComponent<Explosion>())
+        bool destroy = false;
+        if(aic != null)
         {
-            foreach(Rigidbody rb in rigids)
+            destroy = true;
+            if (aic.currentSeat == null && killOnContact)
+            {
+                aic.Fall();
+            }
+        }
+        if(!destroy && (col.GetComponent<KillTrigger>() || col.GetComponent<Explosion>()))
+        {
+            destroy = true;
+        }
+
+        if(destroy)
+        {
+            foreach (Rigidbody rb in rigids)
             {
                 rb.isKinematic = false;
             }
-            foreach(GameObject go in objectsToActivate)
+            foreach (GameObject go in objectsToActivate)
             {
                 go.SetActive(true);
             }
 
-            if(aic.currentSeat == null && killOnContact)
-            {
-                aic.Fall();
-            }
-
             Destroy(gameObject);
         }
+
     }
 }

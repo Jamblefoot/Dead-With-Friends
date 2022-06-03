@@ -13,6 +13,7 @@ public class GhostAI : MonoBehaviour
     Rigidbody rigid;
 
     public LayerMask groundLayers;
+    public LayerMask barrierLayer;
     public float followDistance = 5f;
 
     public Texture2D[] faces;
@@ -35,9 +36,15 @@ public class GhostAI : MonoBehaviour
 
     void MoveAboveGround()
     {
+        RaycastHit hit;
+        Vector3 barrierPos = new Vector3(tran.position.x, 0, tran.position.z);
+        if (Physics.Raycast(Vector3.down * 100, barrierPos.normalized, out hit, barrierPos.magnitude - 1f, barrierLayer, QueryTriggerInteraction.Ignore))
+        {
+            tran.position = new Vector3(hit.point.x, tran.position.y, hit.point.z);
+        }
+
         if (!Physics.Raycast(tran.position, Vector3.down, Mathf.Infinity, groundLayers, QueryTriggerInteraction.Ignore))
         {
-            RaycastHit hit;
             Physics.Raycast(tran.position + Vector3.up * 1000, Vector3.down, out hit, 1000, groundLayers, QueryTriggerInteraction.Ignore);
             tran.position = hit.point + Vector3.up;
         }
@@ -59,6 +66,10 @@ public class GhostAI : MonoBehaviour
 
         if(player == null) return;
         if(player.stillAlive) return;
+
+        rigid.interpolation = player.rigid.interpolation;
+        if(player.possessed != null && player.possessed.currentSeat == null)
+            rigid.interpolation = RigidbodyInterpolation.Interpolate;
 
         tran.LookAt(player.tran, tran.up);
 

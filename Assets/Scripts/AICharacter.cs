@@ -378,15 +378,34 @@ public class AICharacter : MonoBehaviour
                 anim.SetBool("running", true);
                 agent.speed = runSpeed;
             }
-            else anim.SetBool("running", false);
+            else 
+            {
+                if(!onFire)
+                    anim.SetBool("running", false);
+                else fireWanderTimer = 0f;
+            }
         }
 
         
     }
 
+    void OnAnimatorMove()
+    {
+        if (tran.forward != lastForward)
+        {
+            if (possessed)
+            {
+                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, tran.up);
+                GameControl.instance.followCam.ChangeXRotation(rotChange);
+            }
+
+            lastForward = tran.forward;
+        }
+    }
+
     void LateUpdate()
     {
-        if(tran.forward != lastForward)
+        if(tran.forward != lastForward && !anim.enabled)
         {
             if(possessed)
             {

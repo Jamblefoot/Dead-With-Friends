@@ -20,7 +20,7 @@ public class Explosion : MonoBehaviour
         }
         if(col.attachedRigidbody != null && !col.attachedRigidbody.isKinematic)
         {
-            float force = 1500f;
+            float force = 1200f;
             if(col.attachedRigidbody.mass > 100f)//is a car
             {
                 force = col.attachedRigidbody.mass * 1000;

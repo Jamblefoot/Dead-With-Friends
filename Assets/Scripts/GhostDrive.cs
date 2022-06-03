@@ -15,11 +15,12 @@ public class GhostDrive : MonoBehaviour
     float rotSpeed = 0f;
 
     public Transform tran;
-    Rigidbody rigid;
+    public Rigidbody rigid;
     SkinnedMeshRenderer rend;
 
     public LayerMask groundLayers;
     public LayerMask characterLayer;
+    public LayerMask barrierLayer;
 
     float vertical, horizontal;
     bool possessing;
@@ -92,9 +93,16 @@ public class GhostDrive : MonoBehaviour
                 StopPossess();
                 return;
             }
+            if(rigid != null)
+                rigid.interpolation = RigidbodyInterpolation.None;
             tran.localPosition = Vector3.up * 0.5f;//Vector3.zero;
             tran.rotation = tran.parent.rotation;
             return;
+        }
+        else
+        {
+            if(rigid != null)
+                rigid.interpolation = RigidbodyInterpolation.Interpolate;
         }
 
         if(GameControl.instance.inMenu) 
@@ -146,7 +154,8 @@ public class GhostDrive : MonoBehaviour
 
         
         if (tran.position.y < GameControl.instance.waterLevel)
-            move = move * 0.25f + followCam.tran.forward * Mathf.Abs(Vector3.Dot(followCam.tran.forward, Vector3.up)) * vertCalced;
+            move = followCam.tran.forward * vertCalced + followCam.tran.right * horCalced;
+            //move = move * 0.25f + followCam.tran.forward * Mathf.Abs(Vector3.Dot(followCam.tran.forward, Vector3.up)) * vertCalced;
 
         if(rigid == null)
             tran.position += move;
@@ -207,7 +216,7 @@ public class GhostDrive : MonoBehaviour
         tran.parent = null;
         Vector3 forward = tran.forward;
         tran.rotation = Quaternion.identity;
-        //tran.LookAt(Vector3.ProjectOnPlane(tran.position + forward, Vector3.up).normalized, Vector3.up);
+        tran.LookAt(tran.position + Vector3.ProjectOnPlane(forward, Vector3.up).normalized, Vector3.up);
 
         audioSource.pitch = 1;
         audioSource.PlayOneShot(exhaleClip);
@@ -218,9 +227,15 @@ public class GhostDrive : MonoBehaviour
 
     void MoveAboveGround()
     {
+        RaycastHit hit;
+        Vector3 barrierPos = new Vector3(tran.position.x, 0, tran.position.z);
+        if(Physics.Raycast(Vector3.down * 100, barrierPos.normalized, out hit, barrierPos.magnitude - 1f, barrierLayer, QueryTriggerInteraction.Ignore))
+        {
+            tran.position = new Vector3(hit.point.x, tran.position.y, hit.point.z);
+        }
+
         if(!Physics.Raycast(tran.position, Vector3.down, Mathf.Infinity, groundLayers, QueryTriggerInteraction.Ignore))
         {
-            RaycastHit hit;
             Physics.Raycast(tran.position + Vector3.up * 1000, Vector3.down, out hit, 1000, groundLayers, QueryTriggerInteraction.Ignore);
             tran.position = hit.point + Vector3.up;
         }

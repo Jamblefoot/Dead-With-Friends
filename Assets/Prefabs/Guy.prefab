@@ -733,7 +733,9 @@ MonoBehaviour:
   possessed: 0
   head: {fileID: 3542656282597667258}
   dontSpawnGhost: 0
-  walkSpeed: 2
+  onFire: 0
+  fireTimer: 0
+  walkSpeed: 4
   runSpeed: 10
   footstepAudio: {fileID: 5903824556404807812}
   headAudio: {fileID: 4188031779347084183}
