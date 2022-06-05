@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class AICharacter : MonoBehaviour
 {
     Animator anim;
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
     Transform tran;
 
     public Transform target;
@@ -156,6 +156,9 @@ public class AICharacter : MonoBehaviour
 
         Scream();
 
+        if(GameControl.instance.autoSlomo && possessed)
+            GameControl.instance.SetSlomo(true);
+
     }
 
     public void EnterSeat(Seat seat)
@@ -168,11 +171,13 @@ public class AICharacter : MonoBehaviour
         anim.SetBool("walking", false);
         anim.SetBool("running", false);
         anim.SetBool("sitting", true);
-        Collider col = seat.GetComponentInParent<Collider>();
+        IgnoreMe(seat.GetComponentInParent<Collider>(), true);
+        
+        /*Collider col = seat.GetComponentInParent<Collider>();
         foreach(Collider c in GetComponentsInChildren<Collider>())
         {
             Physics.IgnoreCollision(col, c, true);
-        }
+        }*/
         tran.parent = seat.transform;
         tran.localPosition = Vector3.zero;
         tran.localRotation = Quaternion.identity;
@@ -437,9 +442,9 @@ public class AICharacter : MonoBehaviour
 
     bool LookForGhost()
     {
-        if(GameControl.instance.player == null || GameControl.instance.player.parent != null) return false;
+        if(GameControl.instance.player == null || GameControl.instance.player.tran.parent != null) return false;
 
-        Vector3 ghostVector = GameControl.instance.player.position - tran.position;
+        Vector3 ghostVector = GameControl.instance.player.tran.position - tran.position;
         if(ghostVector.sqrMagnitude <= 20f * 20f)
         {
             if(Vector3.Dot(tran.forward, ghostVector.normalized) > 0.5f)
@@ -471,5 +476,20 @@ public class AICharacter : MonoBehaviour
     {
         headAudio.pitch = Random.Range(0.8f, 2f);
         headAudio.PlayOneShot(GameControl.instance.GetScreamSound());
+    }
+
+    public void IgnoreMe(Collider col, bool setting)
+    {
+        foreach (Collider c in GetComponentsInChildren<Collider>())
+        {
+            Physics.IgnoreCollision(col, c, true);
+        }
+    }
+    public void IgnoreSeat(Seat seat)
+    {
+        foreach(Collider col in seat.root.GetComponentsInChildren<Collider>())
+        {
+            IgnoreMe(col, true);
+        }
     }
 }

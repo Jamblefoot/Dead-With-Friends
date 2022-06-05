@@ -223,6 +223,9 @@ public class GhostDrive : MonoBehaviour
 
         MoveAboveGround();
 
+        if(GameControl.instance.autoSlomo)
+            GameControl.instance.SetSlomo(false);
+
     }
 
     void MoveAboveGround()

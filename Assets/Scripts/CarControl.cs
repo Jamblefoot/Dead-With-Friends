@@ -286,8 +286,12 @@ public class CarControl : MonoBehaviour
 
     void Explode()
     {
+        AICharacter aic = null;
         if (driverSeat.occupant != null)
+        {
+            aic = driverSeat.occupant;
             driverSeat.occupant.LeaveSeat();
+        }
         foreach (Collider col in GetComponentsInChildren<Collider>())
         {
             if (col.GetComponent<Rigidbody>() == null)
@@ -295,6 +299,8 @@ public class CarControl : MonoBehaviour
                 col.transform.parent = null;
                 col.gameObject.AddComponent<Rigidbody>();
             }
+
+            if(aic != null) aic.IgnoreMe(col, true);
         }
         engineAudio.Stop();
         Instantiate(explosionPrefab, tran.position, Quaternion.identity);

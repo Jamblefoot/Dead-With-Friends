@@ -50,7 +50,8 @@ public class FollowCam : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(GameControl.instance.inMenu) return;
+        if(GameControl.instance.inMenu || GameControl.instance.player.rigid.interpolation != RigidbodyInterpolation.None) 
+            return;
 
         Vector3 moveDelta = tran.position - lastPos;
         lastPos = tran.position;
@@ -61,6 +62,14 @@ public class FollowCam : MonoBehaviour
     void LateUpdate()
     {
         tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
+
+        if (GameControl.instance.inMenu || GameControl.instance.player.rigid.interpolation == RigidbodyInterpolation.None) 
+            return;
+
+        Vector3 moveDelta = tran.position - lastPos;
+        lastPos = tran.position;
+        cameraTran.position -= moveDelta;
+        cameraTran.localPosition = Vector3.Lerp(cameraTran.localPosition, cameraTargetLocalPos, Time.deltaTime * 10);
     }
 
     public void ChangeXRotation(float change)

@@ -8,7 +8,8 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl instance;
 
-    public Transform player;
+    //public Transform player;
+    public GhostDrive player;
 
     public float gameTime = 0f;
     public int livingCount;
@@ -21,8 +22,22 @@ public class GameControl : MonoBehaviour
     bool endingGame = false;
     bool isBestTime = false;
     public string bestTimeName;
+
+    public bool slowMotion;
+    public bool autoSlomo = true;
+
+    bool tutorial = false;
+    int tutorialStep = 0;
+    [System.Serializable]
+    public class TutorialStep
+    {
+        public bool played;
+        public string tip;
+        public float holdTime;
+    }
+    [SerializeField] TutorialStep[] tutorialSteps;
     
-    [Header("CANVASES")]
+    [Header("CANVASES and UI")]
     [SerializeField] Canvas menuCanvas;
     [SerializeField] Canvas settingsCanvas;
     [SerializeField] Canvas gameCanvas;
@@ -73,7 +88,7 @@ public class GameControl : MonoBehaviour
         }
         else DestroyImmediate(gameObject);
 
-        player = FindObjectOfType<GhostDrive>().transform;
+        player = FindObjectOfType<GhostDrive>();//.transform;
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -109,6 +124,7 @@ public class GameControl : MonoBehaviour
             people.Add(person);
         }
         livingCount = people.Count;
+
     }
 
     
@@ -116,6 +132,11 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            SetSlomo(!slowMotion);
+        }
+
         if(Input.GetButtonDown("Cancel"))
         {
             inMenu = !inMenu;
@@ -173,6 +194,21 @@ public class GameControl : MonoBehaviour
 
             timer.text = gameTime.ToString("F1");
             counter.text = livingCount.ToString();
+        }
+    }
+
+    public void SetSlomo(bool setting)
+    {
+        slowMotion = setting;
+        if (slowMotion)
+        {
+            Time.timeScale = 0.3f;
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        }
+        else 
+        {
+            Time.timeScale = 1f;
+            Time.fixedDeltaTime = 0.02f;
         }
     }
 
@@ -276,6 +312,27 @@ public class GameControl : MonoBehaviour
         if(resetTimesConfirmCanvas == null) return;
 
         resetTimesConfirmCanvas.gameObject.SetActive(value);
+    }
+
+    public void ActivateTutorial(bool setting)
+    {
+        tutorial = setting;
+        for(int i = 0; i < tutorialSteps.Length; i++)
+        {
+            tutorialSteps[i].played = false;
+        }
+    }
+    public void PlayTutorialStep(int step)
+    {
+        if(!tutorial) return;
+        if(tutorialSteps[step].played) return;
+
+        gameText.text = tutorialSteps[step].tip;
+        Invoke("TurnOffTutorial", tutorialSteps[step].holdTime);
+    }
+    void TurnOffTutorial()
+    {
+        gameText.text = "";
     }
 
     

@@ -15,7 +15,10 @@ public class Explosion : MonoBehaviour
         if(aic != null)
         {
             if(aic.currentSeat != null)
+            {
+                aic.IgnoreSeat(aic.currentSeat);
                 aic.LeaveSeat();
+            }
             aic.Fall();
         }
         if(col.attachedRigidbody != null && !col.attachedRigidbody.isKinematic)
