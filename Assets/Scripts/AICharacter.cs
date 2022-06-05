@@ -54,7 +54,7 @@ public class AICharacter : MonoBehaviour
     bool menuState;
     Vector3[] velocities;
     Vector3[] angularVelocities;
-    bool floppy = false;
+    public bool floppy = false;
     
 
     // Start is called before the first frame update
@@ -435,7 +435,7 @@ public class AICharacter : MonoBehaviour
                 child.parent = tran;
             }
 
-            if(rigids[0].IsSleeping())
+            if(rigids[0].IsSleeping() && !GameControl.instance.inMenu)
                 Kill();
         }
     }

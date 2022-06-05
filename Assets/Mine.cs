@@ -5,6 +5,7 @@ using UnityEngine;
 public class Mine : MonoBehaviour
 {
     [SerializeField] GameObject explosionPrefab;
+    [SerializeField] float force = 800f;
 
     void OnTriggerExit(Collider col)
     {
@@ -14,7 +15,8 @@ public class Mine : MonoBehaviour
 
     void Explode()
     {
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Explosion exp = Instantiate(explosionPrefab, transform.position, Quaternion.identity).GetComponent<Explosion>();
+        exp.explosionForce = force;
         Destroy(gameObject);
     }
 }

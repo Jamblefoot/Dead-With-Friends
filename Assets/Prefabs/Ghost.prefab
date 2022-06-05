@@ -433,7 +433,11 @@ MonoBehaviour:
   tran: {fileID: 0}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1025
+  terrainLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  updateMode: 1
 --- !u!1 &1814731648445287290
 GameObject:
   m_ObjectHideFlags: 0
@@ -1351,9 +1355,10 @@ MonoBehaviour:
   speedMult: 0.5
   rotSpeedMult: 5
   tran: {fileID: 0}
+  rigid: {fileID: 0}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1089
   characterLayer:
     serializedVersion: 2
     m_Bits: 128

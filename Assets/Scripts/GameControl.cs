@@ -25,6 +25,7 @@ public class GameControl : MonoBehaviour
 
     public bool slowMotion;
     public bool autoSlomo = true;
+    public bool photoMode = false;
 
     bool tutorial = false;
     int tutorialStep = 0;
@@ -78,6 +79,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] AudioClip[] footsteps;
     [SerializeField] AudioClip[] deathSounds;
     [SerializeField] AudioClip[] screamSounds;
+    [SerializeField] AudioClip clickSound;
 
     // Start is called before the first frame update
     void Start()
@@ -91,6 +93,7 @@ public class GameControl : MonoBehaviour
         player = FindObjectOfType<GhostDrive>();//.transform;
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         terrain = FindObjectOfType<Terrain>();
 
@@ -136,35 +139,35 @@ public class GameControl : MonoBehaviour
         {
             SetSlomo(!slowMotion);
         }
+        if(Mathf.Abs(Input.mouseScrollDelta.y) > 0f && followCam != null)
+        {
+            followCam.ChangeDistance(-Input.mouseScrollDelta.y);
+        }
 
         if(Input.GetButtonDown("Cancel"))
         {
-            inMenu = !inMenu;
-            if(inMenu) 
+            if(photoMode)
             {
-                Cursor.lockState = CursorLockMode.None;
-                if(menuCanvas != null)
-                    menuCanvas.gameObject.SetActive(true);
-                if(isBestTime && saveTimeCanvas != null)
-                {
-                    saveTimeCanvas.gameObject.SetActive(true);
-                }
+                SetPhotoMode(false);
             }
-            else 
+            else
             {
-                Cursor.lockState = CursorLockMode.Locked;
-                if (menuCanvas != null)
-                    menuCanvas.gameObject.SetActive(false);
-                if(settingsCanvas != null)
-                    settingsCanvas.gameObject.SetActive(false);
-                if (scoreCanvas != null)
-                    scoreCanvas.gameObject.SetActive(false);
-                if(saveTimeCanvas != null)
-                    saveTimeCanvas.gameObject.SetActive(false);
-                if(tutorialCanvas != null)
-                    tutorialCanvas.gameObject.SetActive(false);
-                if(creditsCanvas != null)
-                    creditsCanvas.gameObject.SetActive(false);
+                SetMenu(!inMenu);
+            }
+        }
+
+        if(photoMode)
+        {
+            if(Input.GetButtonDown("Jump"))
+            {
+                if(!System.IO.Directory.Exists(Application.dataPath + "/Screenshots/"))
+                    System.IO.Directory.CreateDirectory(Application.dataPath + "/Screenshots/");
+
+                System.DateTime dt = System.DateTime.Now;
+                string suffix = dt.Day.ToString() + dt.Month.ToString() + dt.Year.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+                ScreenCapture.CaptureScreenshot(Application.dataPath + "/Screenshots/screen"+suffix);
+                AudioSource.PlayClipAtPoint(clickSound, followCam.cameraTran.position, 1f);
+                Debug.Log("Screenshot saved to "+ Application.dataPath + "Screenshots/screen"+suffix);
             }
         }
 
@@ -243,12 +246,47 @@ public class GameControl : MonoBehaviour
         Application.Quit();
     }
 
+    public void SetMenu(bool setting)
+    {
+        inMenu = setting;
+
+        if (inMenu)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            if (menuCanvas != null)
+                menuCanvas.gameObject.SetActive(true);
+            if (isBestTime && saveTimeCanvas != null)
+            {
+                saveTimeCanvas.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            if (menuCanvas != null)
+                menuCanvas.gameObject.SetActive(false);
+            if (settingsCanvas != null)
+                settingsCanvas.gameObject.SetActive(false);
+            if (scoreCanvas != null)
+                scoreCanvas.gameObject.SetActive(false);
+            if (saveTimeCanvas != null)
+                saveTimeCanvas.gameObject.SetActive(false);
+            if (tutorialCanvas != null)
+                tutorialCanvas.gameObject.SetActive(false);
+            if (creditsCanvas != null)
+                creditsCanvas.gameObject.SetActive(false);
+        }
+    }
+
     public void ExitMenu()
     {
-        inMenu = false;
+        SetMenu(false);
+        /*inMenu = false;
         Cursor.lockState = CursorLockMode.Locked;
         if (menuCanvas != null)
-            menuCanvas.gameObject.SetActive(false);
+            menuCanvas.gameObject.SetActive(false);*/
     }
 
     public void Restart()
@@ -333,6 +371,22 @@ public class GameControl : MonoBehaviour
     void TurnOffTutorial()
     {
         gameText.text = "";
+        
+    }
+
+    public void SetPhotoMode(bool setting)
+    {
+        photoMode = setting;
+
+        gameCanvas.gameObject.SetActive(!photoMode);
+
+        if (photoMode)
+        {
+            menuCanvas.gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else SetMenu(true);
     }
 
     
@@ -619,6 +673,15 @@ public class GameControl : MonoBehaviour
     {
         terrain.detailObjectDistance = grassDistanceSlider.value;
     }
+
+    public void SetAutoSlomo(bool setting)
+    {
+        autoSlomo = setting;
+        if(!autoSlomo && slowMotion)
+            SetSlomo(false);
+    }
+
+    
 
 
     //////////////\/\\\\\\\\\\\\\

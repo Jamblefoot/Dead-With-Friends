@@ -701,7 +701,7 @@ MonoBehaviour:
   driverSeat: {fileID: 7601092677782870933}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1025
   groundDistance: 2
   axles:
   - {fileID: 5182127014946736451}
@@ -753,6 +753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec62a39b1146f574cad2cdbac8c96c75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: {fileID: 0}
   occupant: {fileID: 0}
 --- !u!1 &7917813493692329868
 GameObject:

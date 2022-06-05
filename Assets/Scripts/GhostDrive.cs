@@ -69,7 +69,7 @@ public class GhostDrive : MonoBehaviour
         horizontal = Input.GetAxis("Horizontal") * speedMult;
         horCalced = Mathf.Lerp(horCalced, horizontal, Time.deltaTime * acceleration);
 
-        if(Input.GetButtonDown("Jump"))
+        if(Input.GetButtonDown("Jump") && !GameControl.instance.inMenu)
         {
             if(!possessing)
                 Possess();
@@ -249,7 +249,7 @@ public class GhostDrive : MonoBehaviour
         isCloud = true;
         rend.enabled = false;
         rigid.isKinematic = true;
-        followCam.ChangeDistance(50);
+        followCam.SetDistance(50);
         Instantiate(cloudPrefab, tran.position, tran.rotation);
 
         foreach(GhostAI g in FindObjectsOfType<GhostAI>())

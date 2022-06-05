@@ -76,7 +76,7 @@ public class GhostAI : MonoBehaviour
         Vector3 move = Vector3.zero;
         if((player.tran.position - tran.position).sqrMagnitude > followDistance * followDistance)
         {
-            move = tran.forward * speedMult;
+            move = tran.forward * speedMult * Time.timeScale;
         }
 
         if(rigid == null)

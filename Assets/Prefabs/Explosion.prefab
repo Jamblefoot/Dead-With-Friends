@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1324403389213214169}
   - component: {fileID: 1248950531813245262}
   - component: {fileID: 3312390491717038000}
+  - component: {fileID: 5371082995147812379}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -29,7 +30,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2076078001001460925}
+  m_Father: {fileID: 8465182682356018449}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &1248950531813245262
@@ -4863,6 +4864,19 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &5371082995147812379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5397946349283562251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68e3a1615b64a9b4486b69bb51219ebf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unparent: 1
 --- !u!1 &8465182682356018452
 GameObject:
   m_ObjectHideFlags: 0
@@ -4893,6 +4907,7 @@ Transform:
   m_LocalPosition: {x: 47.5, y: -3.4, z: -68.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1324403389213214169}
   - {fileID: 2076078001001460925}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -4909,6 +4924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2927240253e7145a09c6a120e537e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionForce: 1500
 --- !u!135 &8465182682356018451
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4966,10 +4982,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1324403389213214169}
+  m_Children: []
   m_Father: {fileID: 8465182682356018449}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &8976867214050988081
 AudioSource:

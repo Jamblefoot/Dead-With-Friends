@@ -946,11 +946,11 @@ MonoBehaviour:
   rotSpeedMult: 5
   groundLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 1089
   barrierLayer:
     serializedVersion: 2
     m_Bits: 64
-  followDistance: 10
+  followDistance: 5
   faces:
   - {fileID: 2800000, guid: 7c77365415c537e439b9cb9ddd9735af, type: 3}
   - {fileID: 2800000, guid: 7cc04d9eec70f5544be42937d1be5c57, type: 3}
