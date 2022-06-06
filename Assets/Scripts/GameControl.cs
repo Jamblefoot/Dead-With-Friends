@@ -26,6 +26,8 @@ public class GameControl : MonoBehaviour
     public bool slowMotion;
     public bool autoSlomo = true;
     public bool photoMode = false;
+    float slomoSpeed = 0.5f;
+
 
     bool tutorial = false;
     int tutorialStep = 0;
@@ -35,6 +37,8 @@ public class GameControl : MonoBehaviour
         public bool played;
         public string tip;
         public float holdTime;
+        public string coroutineName;
+        public IEnumerator coroutine;
     }
     [SerializeField] TutorialStep[] tutorialSteps;
     
@@ -49,6 +53,10 @@ public class GameControl : MonoBehaviour
     [SerializeField] Canvas resetTimesConfirmCanvas;
     [SerializeField] Canvas tutorialCanvas;
     [SerializeField] Canvas creditsCanvas;
+    [SerializeField] Canvas tutorialTipsCanvas;
+    [SerializeField] GameObject tutorialTips;
+    [SerializeField] GameObject tipAlive;
+    [SerializeField] GameObject tipGhost;
 
     [Header("WORLD SETTINGS")]
     public float waterLevel = 0;
@@ -70,6 +78,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] Dropdown shadowResDropdown;
 
     [SerializeField] Slider grassDistanceSlider;
+    [SerializeField] Slider slomoSlider;
 
     FullScreenMode lastScreenMode = FullScreenMode.ExclusiveFullScreen;
     //bool blockScreenmodeChange = false;
@@ -128,6 +137,8 @@ public class GameControl : MonoBehaviour
         }
         livingCount = people.Count;
 
+        ActivateTutorial(tutorial);
+
     }
 
     
@@ -135,6 +146,20 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(tutorial && tutorialTips != null)
+        {
+            if(player.possessed)
+            {
+                tipAlive.SetActive(true);
+                tipGhost.SetActive(false);
+            }
+            else
+            {
+                tipAlive.SetActive(false);
+                tipGhost.SetActive(true);
+            }
+        }
+
         if(Input.GetKeyDown(KeyCode.T))
         {
             SetSlomo(!slowMotion);
@@ -164,7 +189,7 @@ public class GameControl : MonoBehaviour
                     System.IO.Directory.CreateDirectory(Application.dataPath + "/Screenshots/");
 
                 System.DateTime dt = System.DateTime.Now;
-                string suffix = dt.Day.ToString() + dt.Month.ToString() + dt.Year.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
+                string suffix = dt.Day.ToString() + dt.Month.ToString() + dt.Year.ToString() + dt.Second.ToString() + dt.Millisecond.ToString()+".png";
                 ScreenCapture.CaptureScreenshot(Application.dataPath + "/Screenshots/screen"+suffix);
                 AudioSource.PlayClipAtPoint(clickSound, followCam.cameraTran.position, 1f);
                 Debug.Log("Screenshot saved to "+ Application.dataPath + "Screenshots/screen"+suffix);
@@ -205,7 +230,7 @@ public class GameControl : MonoBehaviour
         slowMotion = setting;
         if (slowMotion)
         {
-            Time.timeScale = 0.3f;
+            Time.timeScale = slomoSpeed;
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
         }
         else 
@@ -354,7 +379,16 @@ public class GameControl : MonoBehaviour
 
     public void ActivateTutorial(bool setting)
     {
+        if(setting && !tutorial)
+        {
+            ResetTutorial();
+        }
         tutorial = setting;
+
+        if(tutorialTips != null)
+        {
+            tutorialTips.SetActive(tutorial);
+        }
         for(int i = 0; i < tutorialSteps.Length; i++)
         {
             tutorialSteps[i].played = false;
@@ -372,6 +406,14 @@ public class GameControl : MonoBehaviour
     {
         gameText.text = "";
         
+    }
+
+    void ResetTutorial()
+    {
+        foreach(TutorialStep step in tutorialSteps)
+        {
+            step.played = false;
+        }
     }
 
     public void SetPhotoMode(bool setting)
@@ -409,6 +451,7 @@ public class GameControl : MonoBehaviour
         SetShadowDistanceSlider();
         SetShadowResolutionDropdown();
         SetGrassDistanceSlider();
+        SetSlomoSlider();
     }
 
     public void SetQualityLevel()
@@ -679,6 +722,19 @@ public class GameControl : MonoBehaviour
         autoSlomo = setting;
         if(!autoSlomo && slowMotion)
             SetSlomo(false);
+    }
+
+    void SetSlomoSlider()
+    {
+        slomoSlider.value = slomoSpeed;
+    }
+    public void SetSlomoSpeed(float spd)
+    {
+        slomoSpeed = spd;
+        if(slowMotion)
+        {
+            SetSlomo(true);
+        }
     }
 
     

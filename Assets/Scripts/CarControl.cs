@@ -298,12 +298,14 @@ public class CarControl : MonoBehaviour
             {
                 col.transform.parent = null;
                 col.gameObject.AddComponent<Rigidbody>();
+                col.gameObject.AddComponent<RigidbodyControl>();
             }
 
             if(aic != null) aic.IgnoreMe(col, true);
         }
         engineAudio.Stop();
         Instantiate(explosionPrefab, tran.position, Quaternion.identity);
+        gameObject.AddComponent<RigidbodyControl>();
         Destroy(this);
     }
 }

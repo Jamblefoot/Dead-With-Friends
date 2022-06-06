@@ -396,30 +396,23 @@ public class AICharacter : MonoBehaviour
 
     void OnAnimatorMove()
     {
-        if (tran.forward != lastForward)
+        if (tran.forward != lastForward && currentSeat == null)
         {
-            if (possessed)
-            {
-                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, tran.up);
-                GameControl.instance.followCam.ChangeXRotation(rotChange);
-            }
-
-            lastForward = tran.forward;
+            RotateCamera();
         }
     }
 
+
     void LateUpdate()
     {
-        if(tran.forward != lastForward && !anim.enabled)
+        if(tran.forward != lastForward && !anim.enabled && currentSeat == null)
         {
-            if(possessed)
-            {
-                float rotChange = Vector3.SignedAngle(lastForward, tran.forward, tran.up);
-                GameControl.instance.followCam.ChangeXRotation(rotChange);
-            }
-
-            lastForward = tran.forward;
+            RotateCamera();
         }
+    }
+
+    void FixedUpdate()
+    {
 
         if(followRigidbody && alive)
         {
@@ -438,6 +431,17 @@ public class AICharacter : MonoBehaviour
             if(rigids[0].IsSleeping() && !GameControl.instance.inMenu)
                 Kill();
         }
+    }
+
+    void RotateCamera()
+    {
+        if (possessed)
+        {
+            float rotChange = Vector3.SignedAngle(lastForward, tran.forward, tran.up);
+            GameControl.instance.followCam.ChangeXRotation(rotChange);
+        }
+
+        lastForward = tran.forward;
     }
 
     bool LookForGhost()

@@ -11,7 +11,7 @@ public class FollowCam : MonoBehaviour
     public Transform cameraTran;
 
     Vector3 lastPos;
-    //Vector3 lastLocalPos;
+    Vector3 lastVel = Vector3.zero;
     Vector3 cameraTargetLocalPos;
     Vector3 cameraTargetLocalPosAdjusted;
 
@@ -27,7 +27,9 @@ public class FollowCam : MonoBehaviour
 
     float lastHitDist = 0f;
 
-    bool softenVertical;
+    //Transform followTarget;
+
+    //bool softenVertical;
 
     // Start is called before the first frame update
     void Start()
@@ -47,7 +49,7 @@ public class FollowCam : MonoBehaviour
     {
         if (GameControl.instance.inMenu && !GameControl.instance.photoMode) return;
 
-        if(Input.GetKeyDown(KeyCode.V)) softenVertical = !softenVertical;
+        //if(Input.GetKeyDown(KeyCode.V)) softenVertical = !softenVertical;
 
         xOffset += Input.GetAxis("Mouse X");
         yOffset -= Input.GetAxis("Mouse Y");
@@ -65,8 +67,32 @@ public class FollowCam : MonoBehaviour
         if(GameControl.instance.player.rigid.interpolation != RigidbodyInterpolation.None)
             updateMode = UpdateMode.Late;
         else updateMode = UpdateMode.Fixed;
-        if(GameControl.instance.player.possessed != null && GameControl.instance.player.possessed.currentSeat == null && !GameControl.instance.player.possessed.floppy)
-            updateMode = UpdateMode.Late;
+        if(GameControl.instance.player.possessed != null)
+        { 
+            if(GameControl.instance.player.possessed.currentSeat == null)
+            { 
+                if(!GameControl.instance.player.possessed.floppy)
+                    updateMode = UpdateMode.Late;
+            }
+            else
+            {
+                if(tran.parent == GameControl.instance.player.tran)
+                {
+                    tran.parent = null;
+                    //followTarget = GameControl.instance.player.tran;//.possessed.currentSeat.root;
+                }
+            }
+        }
+
+        if(tran.parent == null)
+        {
+            if(GameControl.instance.player.possessed == null || GameControl.instance.player.possessed.currentSeat == null)
+            {
+                tran.parent = GameControl.instance.player.tran;
+                tran.localPosition = Vector3.zero;
+                //tran.localRotation = Quaternion.identity;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -91,9 +117,9 @@ public class FollowCam : MonoBehaviour
         {
             tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
             ReposeCamDistance();
-            
 
-            
+            if (tran.parent != null)
+            {
             Vector3 moveDelta = tran.position - lastPos;
             Vector3 vertDelta = Vector3.zero;
             AICharacter aic = GameControl.instance.player.possessed;
@@ -101,18 +127,29 @@ public class FollowCam : MonoBehaviour
             {
                 if(aic.floppy)
                     moveDelta = aic.GetComponentInChildren<Rigidbody>().velocity * deltaTime;
-                else if(aic.currentSeat != null && aic.currentSeat.root != null)
+                /*else if(aic.currentSeat != null && aic.currentSeat.root != null)
                 {
-                    moveDelta = aic.currentSeat.root.GetComponentInChildren<Rigidbody>().velocity * deltaTime;
+                    lastVel = Vector3.Lerp(lastVel, aic.currentSeat.root.GetComponentInChildren<Rigidbody>().velocity, deltaTime);
+                    moveDelta = lastVel * deltaTime;
                     vertDelta = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(transform.InverseTransformVector(moveDelta), transform.forward), transform.right);
                 }
+                else lastVel = Vector3.zero;*/
             }
+            //else lastVel = Vector3.zero;
             
             lastPos = tran.position;
 
             
             cameraTran.position -= moveDelta;
             cameraTran.localPosition = Vector3.Lerp(cameraTran.localPosition - vertDelta, cameraTargetLocalPosAdjusted - vertDelta, deltaTime * 10);
+            }
+            else //tran.parent == null - is in car
+            {
+                //Vector3 moveDelta = Vector3.ProjectOnPlane(followTarget.position - lastPos, followTarget.up);
+                lastPos = GameControl.instance.player.tran.position;
+                tran.position = Vector3.Lerp(tran.position, GameControl.instance.player.tran.position, deltaTime * 10);
+                cameraTran.localPosition = cameraTargetLocalPosAdjusted;
+            }
 
             fixedOccurred = false;
 
@@ -125,7 +162,7 @@ public class FollowCam : MonoBehaviour
     {
         Vector3 camVector = (cameraTran.position - tran.position).normalized;
 
-        LayerMask mask = followDistance < 30f ? groundLayers : terrainLayer;
+        LayerMask mask = followDistance < 20f ? groundLayers : terrainLayer;
         //{
         RaycastHit hit;
         if (Physics.Raycast(tran.position, camVector, out hit, followDistance, mask, QueryTriggerInteraction.Ignore))
@@ -156,7 +193,7 @@ public class FollowCam : MonoBehaviour
     public void ChangeDistance(float change)
     {
         followDistance += change;
-        followDistance = Mathf.Clamp(followDistance, 1f, 100f);
+        followDistance = Mathf.Clamp(followDistance, 2f, 100f);
     }
     public float GetDistance()
     {
