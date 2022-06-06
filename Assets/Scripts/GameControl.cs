@@ -26,6 +26,7 @@ public class GameControl : MonoBehaviour
     public bool slowMotion;
     public bool autoSlomo = true;
     public bool photoMode = false;
+    bool menuState = false;
     float slomoSpeed = 0.5f;
 
 
@@ -56,6 +57,7 @@ public class GameControl : MonoBehaviour
     [SerializeField] Canvas tutorialTipsCanvas;
     [SerializeField] GameObject tutorialTips;
     [SerializeField] GameObject tipAlive;
+    [SerializeField] GameObject tipDrive;
     [SerializeField] GameObject tipGhost;
 
     [Header("WORLD SETTINGS")]
@@ -150,12 +152,23 @@ public class GameControl : MonoBehaviour
         {
             if(player.possessed)
             {
-                tipAlive.SetActive(true);
-                tipGhost.SetActive(false);
+                if(player.possessed.currentSeat != null)
+                {
+                    tipAlive.SetActive(false);
+                    tipDrive.SetActive(true);
+                    tipGhost.SetActive(false);
+                }
+                else
+                {
+                    tipAlive.SetActive(true);
+                    tipDrive.SetActive(false);
+                    tipGhost.SetActive(false);
+                }
             }
             else
             {
                 tipAlive.SetActive(false);
+                tipDrive.SetActive(false);
                 tipGhost.SetActive(true);
             }
         }
@@ -171,13 +184,26 @@ public class GameControl : MonoBehaviour
 
         if(Input.GetButtonDown("Cancel"))
         {
-            if(photoMode)
+            if (photoMode)
             {
                 SetPhotoMode(false);
             }
             else
             {
                 SetMenu(!inMenu);
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Tab))
+        {
+            SetPhotoMode(!photoMode);
+            if(photoMode)
+            {
+                menuState = inMenu;
+                inMenu = true;
+            }
+            else
+            {
+                SetMenu(false);
             }
         }
 
