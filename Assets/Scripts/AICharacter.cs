@@ -116,6 +116,10 @@ public class AICharacter : MonoBehaviour
         headAudio.pitch = Random.Range(0.8f, 2f);
         headAudio.PlayOneShot(GameControl.instance.GetDeathSound());
         GameControl.instance.RemoveFromLiving(this);
+        if(GetComponent<Collider>())
+        {
+            Destroy(GetComponent<Collider>());
+        }
         StartCoroutine(CoKill());
     }
 
@@ -211,7 +215,7 @@ public class AICharacter : MonoBehaviour
     {
         Debug.Log("Looking for seat");
         RaycastHit hit;
-        if(Physics.Raycast(head.position, GameControl.instance.followCam.tran.forward, out hit, 3f, seatLayers, QueryTriggerInteraction.Collide))
+        if(Physics.SphereCast(head.position, 1f, GameControl.instance.followCam.tran.forward, out hit, 3f, seatLayers, QueryTriggerInteraction.Collide))
         {
             Seat s = hit.transform.GetComponentInChildren<Seat>();
             if(s != null && s.occupant == null)
@@ -431,6 +435,15 @@ public class AICharacter : MonoBehaviour
             if(rigids[0].IsSleeping() && !GameControl.instance.inMenu)
                 Kill();
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(!alive || possessed || currentSeat != null) return;
+
+        Seat seat = other.GetComponentInChildren<Seat>();
+        if(seat != null && seat.occupant == null)
+            EnterSeat(seat);
     }
 
     void RotateCamera()

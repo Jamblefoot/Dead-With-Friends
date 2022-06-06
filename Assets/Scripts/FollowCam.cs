@@ -11,9 +11,11 @@ public class FollowCam : MonoBehaviour
     public Transform cameraTran;
 
     Vector3 lastPos;
-    Vector3 lastVel = Vector3.zero;
     Vector3 cameraTargetLocalPos;
     Vector3 cameraTargetLocalPosAdjusted;
+
+    Vector3 photoCenter = Vector3.zero;
+    Vector3 photoOffset = Vector3.zero;
 
     public LayerMask groundLayers;
     public LayerMask terrainLayer;
@@ -27,9 +29,6 @@ public class FollowCam : MonoBehaviour
 
     float lastHitDist = 0f;
 
-    //Transform followTarget;
-
-    //bool softenVertical;
 
     // Start is called before the first frame update
     void Start()
@@ -50,10 +49,28 @@ public class FollowCam : MonoBehaviour
         if (GameControl.instance.inMenu && !GameControl.instance.photoMode) return;
 
         //if(Input.GetKeyDown(KeyCode.V)) softenVertical = !softenVertical;
+        
 
         xOffset += Input.GetAxis("Mouse X");
         yOffset -= Input.GetAxis("Mouse Y");
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
+
+        if (GameControl.instance.photoMode)
+        {
+            Vector3 move = Vector3.zero;
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            if(!Input.GetButton("Fire2"))
+                move = cameraTran.right * horizontal + cameraTran.up * vertical;
+            else move = cameraTran.forward * vertical + cameraTran.right * horizontal;
+            move *= Time.deltaTime * 10;
+            photoOffset += move;
+        }
+        else
+        {
+            photoCenter = Vector3.zero;
+            photoOffset = Vector3.zero;
+        }
 
         //tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
 
@@ -79,6 +96,7 @@ public class FollowCam : MonoBehaviour
                 if(tran.parent == GameControl.instance.player.tran)
                 {
                     tran.parent = null;
+                    CalculateRotation();
                     //followTarget = GameControl.instance.player.tran;//.possessed.currentSeat.root;
                 }
             }
@@ -90,6 +108,7 @@ public class FollowCam : MonoBehaviour
             {
                 tran.parent = GameControl.instance.player.tran;
                 tran.localPosition = Vector3.zero;
+                CalculateRotation();
                 //tran.localRotation = Quaternion.identity;
             }
         }
@@ -127,15 +146,7 @@ public class FollowCam : MonoBehaviour
             {
                 if(aic.floppy)
                     moveDelta = aic.GetComponentInChildren<Rigidbody>().velocity * deltaTime;
-                /*else if(aic.currentSeat != null && aic.currentSeat.root != null)
-                {
-                    lastVel = Vector3.Lerp(lastVel, aic.currentSeat.root.GetComponentInChildren<Rigidbody>().velocity, deltaTime);
-                    moveDelta = lastVel * deltaTime;
-                    vertDelta = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(transform.InverseTransformVector(moveDelta), transform.forward), transform.right);
-                }
-                else lastVel = Vector3.zero;*/
             }
-            //else lastVel = Vector3.zero;
             
             lastPos = tran.position;
 
@@ -171,13 +182,13 @@ public class FollowCam : MonoBehaviour
             //lastHitDist = dist;
             
             cameraTran.position = tran.position + camVector * (hit.distance - 1f);
-            cameraTargetLocalPosAdjusted = cameraTargetLocalPos.normalized * (hit.distance - 1f);
+            cameraTargetLocalPosAdjusted = cameraTargetLocalPos.normalized * (hit.distance - 1f) + transform.InverseTransformVector(photoOffset);
 
             return;
         }
         //}
         
-        cameraTargetLocalPosAdjusted = cameraTargetLocalPos.normalized * followDistance;
+        cameraTargetLocalPosAdjusted = cameraTargetLocalPos.normalized * followDistance + transform.InverseTransformVector(photoOffset);
     }
 
     public void ChangeXRotation(float change)
@@ -198,5 +209,12 @@ public class FollowCam : MonoBehaviour
     public float GetDistance()
     {
         return followDistance;
+    }
+
+    void CalculateRotation()
+    {
+        yOffset = tran.localRotation.eulerAngles.x;
+        xOffset = tran.localRotation.eulerAngles.y;
+        yOffset = Mathf.Clamp(yOffset, -80f, 80f);
     }
 }

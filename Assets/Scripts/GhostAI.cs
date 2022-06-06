@@ -74,7 +74,7 @@ public class GhostAI : MonoBehaviour
         tran.LookAt(player.tran, tran.up);
 
         Vector3 move = Vector3.zero;
-        if((player.tran.position - tran.position).sqrMagnitude > followDistance * followDistance)
+        if((player.tran.position - tran.position).sqrMagnitude > Mathf.Pow(followDistance + player.rigid.velocity.magnitude, 2f))
         {
             move = tran.forward * speedMult * Time.timeScale;
         }

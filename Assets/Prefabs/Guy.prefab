@@ -667,6 +667,7 @@ GameObject:
   - component: {fileID: 5392693487405806638}
   - component: {fileID: 1998515827517181740}
   - component: {fileID: 1998515827517181741}
+  - component: {fileID: 7972231301072535305}
   m_Layer: 7
   m_Name: Guy
   m_TagString: Untagged
@@ -722,6 +723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06082df054d832a439eefa6fbfd2e3f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
   target: {fileID: 0}
   scared: 0
   ghostPrefab: {fileID: 6368891365658985190, guid: e4961a5ad9515644289e4cda4b439382, type: 3}
@@ -739,6 +741,7 @@ MonoBehaviour:
   runSpeed: 10
   footstepAudio: {fileID: 5903824556404807812}
   headAudio: {fileID: 4188031779347084183}
+  floppy: 0
 --- !u!195 &1998515827517181741
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -761,6 +764,19 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!135 &7972231301072535305
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692595207787197678}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 1.62, z: 0.55}
 --- !u!1 &1810563722592943650
 GameObject:
   m_ObjectHideFlags: 0

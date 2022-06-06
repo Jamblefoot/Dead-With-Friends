@@ -31,6 +31,8 @@ public class BreakTrigger : MonoBehaviour
             foreach (Rigidbody rb in rigids)
             {
                 rb.isKinematic = false;
+                if(!rb.GetComponent<RigidbodyControl>())
+                    rb.gameObject.AddComponent<RigidbodyControl>();
             }
             foreach (GameObject go in objectsToActivate)
             {
