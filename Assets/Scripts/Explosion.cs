@@ -35,6 +35,13 @@ public class Explosion : MonoBehaviour
             return;
         }
 
+        CarControl cc = col.GetComponent<CarControl>();
+        if(cc != null)
+        {
+            cc.AddDamage(10);
+            return;
+        }
+
         HouseControl hc = col.GetComponentInParent<HouseControl>();
         if(hc != null)
         {

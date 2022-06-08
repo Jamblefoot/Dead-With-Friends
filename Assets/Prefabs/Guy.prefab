@@ -731,7 +731,7 @@ MonoBehaviour:
   currentSeat: {fileID: 0}
   seatLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2048
   possessed: 0
   head: {fileID: 3542656282597667258}
   dontSpawnGhost: 0

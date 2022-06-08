@@ -11,10 +11,10 @@ public class CarControl : MonoBehaviour
     public Waypoint waypoint;
     public bool wander = true;
     public Seat driverSeat;
-    float stoppingDistance = 5f;
-    float maxSpeed = 15f;
-    float acceleration = 50f;
-    float rotSpeed = 5f;
+    [SerializeField] float stoppingDistance = 5f;
+    [SerializeField] float maxSpeed = 15f;
+    [SerializeField] float acceleration = 50f;
+    [SerializeField] float rotSpeed = 5f;
 
     float currentSpeed = 0f;
 
@@ -34,6 +34,7 @@ public class CarControl : MonoBehaviour
     [SerializeField] GameObject smokeParticles;
     [SerializeField] GameObject explosionPrefab;
     float explodeTimer;
+    float damage;
 
     bool menuState;
     Vector3 velocity;
@@ -137,37 +138,67 @@ public class CarControl : MonoBehaviour
             if(explodeTimer > 10f)
             {
                 smokeParticles.SetActive(true);
+
+                if(explodeTimer > 15f)
+                {
+                    if(driverSeat.occupant != null && Vector3.Dot(tran.up, Vector3.up) < 0f && !driverSeat.occupant.possessed)
+                    {
+                        AICharacter aic = driverSeat.occupant;
+                        driverSeat.occupant.LeaveSeat();
+                        aic.RunAwayFrom(transform.position, 5, 15);
+                    }
+
+                    if(explodeTimer > 20f)
+                    {
+                        Explode();
+                    }
+                }
             }
-            if(explodeTimer > 20f)
-            {
-                Explode();
-            }
+            
             return;
         }
         else 
         {
+            if(damage > 10)
+            {
+                explodeTimer = 10f;
+            }
+
             if(explodeTimer < 10f)
                 explodeTimer = 0;
-            else explodeTimer = 10f;
+            else 
+            {
+                explodeTimer = 10f;
+                damage = Mathf.Max(damage, explodeTimer);
+            }
+        }
+
+        if(damage > 10f)
+        {
+            if(!smokeParticles.activeSelf)
+                smokeParticles.SetActive(true);
+
+            if(damage > 20f)
+                Explode();
         }
 
         if (driverSeat.occupant == null) return;
 
         if(driverSeat.occupant.possessed)
         {
-            MoveTowardPosition(tran.position + tran.forward * vertical * 10 + tran.right * horizontal * 10);
+            MoveTowardPosition(tran.position + tran.forward * vertical * (stoppingDistance + 1) + tran.right * horizontal * (stoppingDistance + 1), Vector3.zero);
             return;
         }
 
         if (destination != null)
         {
-            MoveTowardPosition(destination.position);
+            MoveTowardPosition(destination.position, Vector3.zero);
             return;
         }
 
         if(waypoint != null)
         {
-            if(MoveTowardPosition(waypoint.transform.position) < 10f)
+            if(MoveTowardPosition(waypoint.transform.position, waypoint.plane) < 10f)
             {
                 if(wander)
                 {
@@ -181,7 +212,7 @@ public class CarControl : MonoBehaviour
         // Explode when collide with static object or other car at high enough speed
     }
 
-    float MoveTowardPosition(Vector3 position)
+    float MoveTowardPosition(Vector3 position, Vector3 plane)
     {
 
 
@@ -259,10 +290,13 @@ public class CarControl : MonoBehaviour
         }
         lastPos = tran.position;
 
+        if(plane != Vector3.zero && Vector3.Dot(Vector3.ProjectOnPlane(position - tran.position, Vector3.up).normalized, tran.TransformVector(plane)) < -0.5f)
+            dist = 0f;
+
         return dist;
     }
 
-    Waypoint FindNearestWaypoint()
+    Waypoint FindNearestWaypoint(bool searchInFront = true)
     {
         float dist = 5000;
         Waypoint wp = null;
@@ -271,9 +305,25 @@ public class CarControl : MonoBehaviour
             float d = Vector3.Distance(tran.position, w.transform.position);
             if(d < dist)
             {
-                dist = d;
-                wp = w;
+                if(searchInFront)
+                {
+                    if(Vector3.Dot((w.transform.position - tran.position).normalized, tran.forward) > 0f)
+                    {
+                        dist = d;
+                        wp = w;
+                    }
+                }
+                else
+                {
+                    dist = d;
+                    wp = w;
+                }
             }
+        }
+
+        if(wp == null && searchInFront)
+        {
+            FindNearestWaypoint(false);
         }
 
         return wp;
@@ -307,5 +357,10 @@ public class CarControl : MonoBehaviour
         Instantiate(explosionPrefab, tran.position, Quaternion.identity);
         gameObject.AddComponent<RigidbodyControl>();
         Destroy(this);
+    }
+
+    public void AddDamage(int amount)
+    {
+        damage += amount;
     }
 }

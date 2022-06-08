@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Waypoint : MonoBehaviour
 {
+    public Vector3 plane = Vector3.zero;
+
     public Waypoint[] connections;
 
     void OnDrawGizmos()

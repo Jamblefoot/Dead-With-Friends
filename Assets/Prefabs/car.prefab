@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 3267277509719383493}
   - component: {fileID: 6384108770945581781}
   - component: {fileID: 6625106414919150048}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 7909944209578466329}
   - component: {fileID: 7238151250023005438}
   - component: {fileID: 3102798374182022658}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +475,7 @@ GameObject:
   - component: {fileID: 604624450043075536}
   - component: {fileID: 9119956118348756271}
   - component: {fileID: 714443315425343326}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -572,7 +572,7 @@ GameObject:
   - component: {fileID: 7601092678894571395}
   - component: {fileID: 7601092678894571392}
   - component: {fileID: 497425039526389730}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -699,9 +699,13 @@ MonoBehaviour:
   waypoint: {fileID: 0}
   wander: 1
   driverSeat: {fileID: 7601092677782870933}
+  stoppingDistance: 5
+  maxSpeed: 15
+  acceleration: 50
+  rotSpeed: 5
   groundLayers:
     serializedVersion: 2
-    m_Bits: 1025
+    m_Bits: 3073
   groundDistance: 2
   axles:
   - {fileID: 5182127014946736451}
@@ -848,7 +852,7 @@ GameObject:
   - component: {fileID: 1295898829821403523}
   - component: {fileID: 6054999726497391121}
   - component: {fileID: 7668399348201128227}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

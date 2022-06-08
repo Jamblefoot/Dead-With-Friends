@@ -431,6 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tran: {fileID: 0}
+  cameraTran: {fileID: 0}
   groundLayers:
     serializedVersion: 2
     m_Bits: 1025
@@ -1358,7 +1359,7 @@ MonoBehaviour:
   rigid: {fileID: 0}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 1089
+    m_Bits: 3137
   characterLayer:
     serializedVersion: 2
     m_Bits: 128

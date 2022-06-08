@@ -482,6 +482,14 @@ public class AICharacter : MonoBehaviour
         return false;
     }
 
+    public void RunAwayFrom(Vector3 pos, float minTime = 10f, float maxTime = 30f)
+    {
+        fleeVector = (pos - tran.position).normalized;
+        fleeTimer = Random.Range(minTime, 30f);
+        scared = true;
+        Scream();
+    }
+
     public void Footstep()
     {
         if(GameControl.instance.inMenu) return;
