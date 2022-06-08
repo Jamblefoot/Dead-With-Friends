@@ -36,6 +36,8 @@ public class CarControl : MonoBehaviour
     float explodeTimer;
     float damage;
 
+    [SerializeField] GameObject[] destroyOnDestroy;
+
     bool menuState;
     Vector3 velocity;
     Vector3 angularVelocity;
@@ -198,7 +200,7 @@ public class CarControl : MonoBehaviour
 
         if(waypoint != null)
         {
-            if(MoveTowardPosition(waypoint.transform.position, waypoint.plane) < 10f)
+            if(MoveTowardPosition(waypoint.transform.position, waypoint.plane) < stoppingDistance)//10f)
             {
                 if(wander)
                 {
@@ -291,7 +293,7 @@ public class CarControl : MonoBehaviour
         lastPos = tran.position;
 
         if(plane != Vector3.zero && Vector3.Dot(Vector3.ProjectOnPlane(position - tran.position, Vector3.up).normalized, tran.TransformVector(plane)) < -0.5f)
-            dist = 0f;
+            dist = 1f;
 
         return dist;
     }
@@ -362,5 +364,14 @@ public class CarControl : MonoBehaviour
     public void AddDamage(int amount)
     {
         damage += amount;
+    }
+
+    void OnDestroy()
+    {
+        foreach(GameObject go in destroyOnDestroy)
+        {
+            if(go != null)
+                Destroy(go);
+        }
     }
 }

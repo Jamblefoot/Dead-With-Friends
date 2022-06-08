@@ -23,5 +23,12 @@ public class Waypoint : MonoBehaviour
             Gizmos.DrawLine(midPoint, midPoint - (dir).normalized + cross);
             Gizmos.DrawLine(midPoint, midPoint - (dir).normalized - cross);
         }
+
+        if(plane != Vector3.zero)
+        {
+            Gizmos.color = Color.blue;
+            Vector3 dir = transform.TransformDirection(plane);
+            Gizmos.DrawLine(transform.position, transform.position + dir * 10);
+        }
     }
 }

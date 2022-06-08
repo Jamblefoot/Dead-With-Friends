@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Town.unity
     guid: d1de2395c0849d546ab5bb0965d72cfa
   - enabled: 1
-    path: Assets/Scenes/Track.unity
+    path: Assets/Scenes/Racetrack.unity
     guid: f085caae72cd81e4c9921990b5b7f405
   - enabled: 0
     path: Assets/Scenes/Main.unity

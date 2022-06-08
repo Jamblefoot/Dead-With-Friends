@@ -182,7 +182,7 @@ public class GameControl : MonoBehaviour
             followCam.ChangeDistance(-Input.mouseScrollDelta.y);
         }
 
-        if(Input.GetButtonDown("Cancel"))
+        if(Input.GetButtonDown("Cancel") && !saveTimeCanvas.gameObject.activeSelf)
         {
             if (photoMode)
             {
@@ -193,7 +193,7 @@ public class GameControl : MonoBehaviour
                 SetMenu(!inMenu);
             }
         }
-        if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Tab))
+        if((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Tab)) && !saveTimeCanvas.gameObject.activeSelf)
         {
             SetPhotoMode(!photoMode);
             if(photoMode)
