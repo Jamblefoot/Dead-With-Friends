@@ -9,6 +9,7 @@ public class FollowCam : MonoBehaviour
 
     public Transform tran;
     public Transform cameraTran;
+    AudioListener audioListener;
 
     Vector3 lastPos;
     Vector3 cameraTargetLocalPos;
@@ -26,8 +27,13 @@ public class FollowCam : MonoBehaviour
 
     public enum UpdateMode{ Fixed, Late};
     public UpdateMode updateMode = UpdateMode.Late;
+    UpdateMode lastUpdateMode = UpdateMode.Fixed;
 
     float lastHitDist = 0f;
+
+    float autoRotateTimer = 0f;
+
+    Vector3 velocity = Vector3.zero;
 
 
     // Start is called before the first frame update
@@ -40,6 +46,8 @@ public class FollowCam : MonoBehaviour
         followDistance = (tran.position - cameraTran.position).magnitude;
 
         lastPos = tran.position;
+
+        audioListener = GetComponentInChildren<AudioListener>();
         //lastLocalPos = tran.localPosition;
     }
 
@@ -49,10 +57,11 @@ public class FollowCam : MonoBehaviour
         if (GameControl.instance.inMenu && !GameControl.instance.photoMode) return;
 
         //if(Input.GetKeyDown(KeyCode.V)) softenVertical = !softenVertical;
-        
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
 
-        xOffset += Input.GetAxis("Mouse X");
-        yOffset -= Input.GetAxis("Mouse Y");
+        xOffset += mouseX;
+        yOffset -= mouseY;
         yOffset = Mathf.Clamp(yOffset, -80f, 80f);
 
         if (GameControl.instance.photoMode)
@@ -70,6 +79,28 @@ public class FollowCam : MonoBehaviour
         {
             photoCenter = Vector3.zero;
             photoOffset = Vector3.zero;
+
+            /*if(Mathf.Abs(mouseX) <= 0.001f && Mathf.Abs(mouseY) < 0.001f && GameControl.instance.player.possessed.currentSeat != null)
+            {
+                if(autoRotateTimer < 1f)
+                    autoRotateTimer += Time.deltaTime;
+                else
+                {
+                    float rotHorz = Vector3.SignedAngle(tran.forward, Vector3.ProjectOnPlane(velocity, tran.up), tran.up);
+                    //float rotVert = Vector3.SignedAngle(tran.forward, Vector3.ProjectOnPlane(velocity, tran.right), tran.right);
+                    if(Mathf.Abs(rotHorz) < 100f)
+                        rotHorz = 0f;
+                    //if(Mathf.Abs(rotVert) < 20f)
+                    //    rotVert = 0f;
+                    xOffset -= rotHorz * Time.deltaTime;//Mathf.Min(20f, Mathf.Abs(rotHorz)) * Mathf.Sign(rotHorz) * Time.deltaTime;
+                    //yOffset -= Mathf.Min(20f, Mathf.Abs(rotVert)) * Mathf.Sign(rotVert) * Time.deltaTime;
+                    //yOffset = Mathf.Clamp(yOffset, -80f, 80f);
+                }
+            }
+            else
+            {
+                autoRotateTimer = 0f;
+            }*/
         }
 
         //tran.localRotation = Quaternion.Euler(yOffset, xOffset, 0f);
@@ -102,6 +133,17 @@ public class FollowCam : MonoBehaviour
             }
         }
 
+        if(updateMode != lastUpdateMode)
+        {
+            lastUpdateMode = updateMode;
+            AudioVelocityUpdateMode audioUpdate = GetAudioUpdate();
+            foreach(AudioSource audio in FindObjectsOfType<AudioSource>())
+            {
+                audio.velocityUpdateMode = audioUpdate;
+            }
+            audioListener.velocityUpdateMode = audioUpdate;
+        }
+
         if(tran.parent == null)
         {
             if(GameControl.instance.player.possessed == null || GameControl.instance.player.possessed.currentSeat == null)
@@ -112,6 +154,13 @@ public class FollowCam : MonoBehaviour
                 //tran.localRotation = Quaternion.identity;
             }
         }
+    }
+
+    public AudioVelocityUpdateMode GetAudioUpdate()
+    {
+        if(updateMode == UpdateMode.Late)
+            return AudioVelocityUpdateMode.Dynamic;
+        else return AudioVelocityUpdateMode.Fixed;
     }
 
     void FixedUpdate()
@@ -139,24 +188,28 @@ public class FollowCam : MonoBehaviour
 
             if (tran.parent != null)
             {
-            Vector3 moveDelta = tran.position - lastPos;
-            Vector3 vertDelta = Vector3.zero;
-            AICharacter aic = GameControl.instance.player.possessed;
-            if (aic != null)
-            {
-                if(aic.floppy)
-                    moveDelta = aic.GetComponentInChildren<Rigidbody>().velocity * deltaTime;
-            }
-            
-            lastPos = tran.position;
+                Vector3 moveDelta = tran.position - lastPos;
+                velocity = Vector3.Lerp(velocity, moveDelta / deltaTime, deltaTime);
+                Vector3 vertDelta = Vector3.zero;
+                AICharacter aic = GameControl.instance.player.possessed;
+                if (aic != null)
+                {
+                    if(aic.floppy)
+                        moveDelta = aic.GetComponentInChildren<Rigidbody>().velocity * deltaTime;
+                }
+                
+                lastPos = tran.position;
 
-            
-            cameraTran.position -= moveDelta;
-            cameraTran.localPosition = Vector3.Lerp(cameraTran.localPosition - vertDelta, cameraTargetLocalPosAdjusted - vertDelta, deltaTime * 10);
+                
+                cameraTran.position -= moveDelta;
+                cameraTran.localPosition = Vector3.Lerp(cameraTran.localPosition - vertDelta, cameraTargetLocalPosAdjusted - vertDelta, deltaTime * 10);
             }
             else //tran.parent == null - is in car
             {
                 //Vector3 moveDelta = Vector3.ProjectOnPlane(followTarget.position - lastPos, followTarget.up);
+                Vector3 moveDelta = tran.position - lastPos;
+                velocity = Vector3.Lerp(velocity, moveDelta / deltaTime, deltaTime);
+
                 lastPos = GameControl.instance.player.tran.position;
                 tran.position = Vector3.Lerp(tran.position, GameControl.instance.player.tran.position, deltaTime * 10);
                 cameraTran.localPosition = cameraTargetLocalPosAdjusted;

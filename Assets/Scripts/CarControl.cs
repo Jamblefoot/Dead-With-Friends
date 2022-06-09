@@ -7,6 +7,7 @@ public class CarControl : MonoBehaviour
     Transform tran;
     Rigidbody rigid;
 
+    public bool blockMovement = false;
     public Transform destination;
     public Waypoint waypoint;
     public bool wander = true;
@@ -184,7 +185,7 @@ public class CarControl : MonoBehaviour
                 Explode();
         }
 
-        if (driverSeat.occupant == null) return;
+        if (driverSeat.occupant == null || blockMovement) return;
 
         if(driverSeat.occupant.possessed)
         {
@@ -229,6 +230,13 @@ public class CarControl : MonoBehaviour
 
         if (dist > stoppingDistance)
         {
+            if (waypoint != null && plane != Vector3.zero && Vector3.Dot((position - tran.position).normalized, waypoint.transform.TransformVector(plane)) < 0)
+            {
+                waypoint = waypoint.connections[Random.Range(0, waypoint.connections.Length)];
+                dist = MoveTowardPosition(waypoint.transform.position, Vector3.zero);
+                return dist;
+            }
+
             float dot = Vector3.Dot(tran.forward, (position - tran.position).normalized);
             if(dot < -0.5f) reverseMult = -1;
 
@@ -292,8 +300,8 @@ public class CarControl : MonoBehaviour
         }
         lastPos = tran.position;
 
-        if(plane != Vector3.zero && Vector3.Dot(Vector3.ProjectOnPlane(position - tran.position, Vector3.up).normalized, tran.TransformVector(plane)) < -0.5f)
-            dist = 1f;
+        //if(plane != Vector3.zero && Vector3.Dot(Vector3.ProjectOnPlane(position - tran.position, Vector3.up).normalized, tran.TransformVector(plane)) < -0.5f)
+        //    dist = 1f;
 
         return dist;
     }

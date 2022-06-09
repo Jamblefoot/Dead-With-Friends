@@ -102,7 +102,7 @@ public class GhostDrive : MonoBehaviour
         else
         {
             if(rigid != null)
-                rigid.interpolation = RigidbodyInterpolation.Interpolate;
+                rigid.interpolation = RigidbodyInterpolation.None;//Interpolate;
         }
 
         if(GameControl.instance.inMenu) 
