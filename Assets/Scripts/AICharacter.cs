@@ -56,6 +56,10 @@ public class AICharacter : MonoBehaviour
     Vector3[] angularVelocities;
     public bool floppy = false;
     
+    void Awake()
+    {
+        RandomizeColors();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -67,14 +71,15 @@ public class AICharacter : MonoBehaviour
         //rigid = GetComponentInChildren<Rigidbody>();
         rigids = GetComponentsInChildren<Rigidbody>();
 
-        SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer>();
+        //RandomizeColors();
+        /*SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer>();
         List<Material> mats = new List<Material>();
         rend.GetMaterials(mats);
         for(int i = 0; i < mats.Count; i++)
         {
             Color col = new Color(Random.value, Random.value, Random.value, 1);
             mats[i].color = col;
-        }
+        }*/
 
         foreach(Rigidbody rb in rigids)
         {
@@ -92,6 +97,18 @@ public class AICharacter : MonoBehaviour
         wanderPos = tran.position + new Vector3(Random.Range(-50f, 50f), 0f, Random.Range(-50f, 50f));
 
         menuState = GameControl.instance.inMenu;
+    }
+
+    public void RandomizeColors()
+    {
+        SkinnedMeshRenderer rend = GetComponentInChildren<SkinnedMeshRenderer>();
+        List<Material> mats = new List<Material>();
+        rend.GetMaterials(mats);
+        for (int i = 0; i < mats.Count; i++)
+        {
+            Color col = new Color(Random.value, Random.value, Random.value, 1);
+            mats[i].color = col;
+        }
     }
 
     void Seek(Vector3 location)

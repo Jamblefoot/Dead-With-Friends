@@ -130,10 +130,10 @@ public class RaceControl : MonoBehaviour
         for(int i = participants.Count - 1; i >= 0; i--)
         {
             if(participants[i].number == playerNumber)
-                s = s + "<b>";
+                s = s + "<b><color=\"#FF0000\">";
             s = s + participants[i].number.ToString() + ": " + participants[i].points.ToString() +"\n";
             if (participants[i].number == playerNumber)
-                s = s + "</b>";
+                s = s + "</color></b>";
         }
         positionText.text = s;
     }

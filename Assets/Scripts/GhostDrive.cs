@@ -56,6 +56,7 @@ public class GhostDrive : MonoBehaviour
             possessed.dontSpawnGhost = true;
             stillAlive = true;
             Possess(possessed);
+            //possessed.RandomizeColors();
         }
     }
 
